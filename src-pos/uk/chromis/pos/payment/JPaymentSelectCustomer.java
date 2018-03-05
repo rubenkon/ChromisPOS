@@ -95,6 +95,6 @@ public class JPaymentSelectCustomer extends JPaymentSelect {
      */
     @Override
     protected PaymentInfo getDefaultPayment(double total) {
-        return new PaymentInfoCash_original(total, total);
+        return new PaymentInfoCash(total, total, total);
     }    
 }

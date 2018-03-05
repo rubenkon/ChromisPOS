@@ -111,10 +111,10 @@ public class JPaymentCashPos extends javax.swing.JPanel implements JPaymentInter
     public PaymentInfo executePayment() {
         if (m_dPaid - m_dTotal >= 0.0) {
             // pago completo
-            return new PaymentInfoCash_original(m_dTotal, m_dPaid);
+            return new PaymentInfoCash(m_dTotal, m_dPaid, m_dPaid);
         } else {
             // pago parcial
-            return new PaymentInfoCash_original(m_dPaid, m_dPaid);
+            return new PaymentInfoCash(m_dPaid, m_dPaid, m_dPaid);
         }        
     }
 
