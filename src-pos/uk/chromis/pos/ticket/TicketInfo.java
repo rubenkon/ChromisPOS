@@ -92,7 +92,6 @@ public final class TicketInfo implements SerializableRead, Externalizable {
     private Boolean oldTicket;
     private Boolean m_sharedticket;
     private UserInfo m_sharedticketUser;
-    private String m_nosc;
 
     private static String Hostname;
 
@@ -125,8 +124,6 @@ public final class TicketInfo implements SerializableRead, Externalizable {
         oldTicket = false;
         multiply = 0.0;
         m_sharedticket = false;
-        m_nosc = "0";
-
     }
 
     @Override
@@ -140,7 +137,6 @@ public final class TicketInfo implements SerializableRead, Externalizable {
         out.writeObject(attributes);
         out.writeObject(m_aLines);
         out.writeObject(m_CouponLines);
-        out.writeObject(m_nosc);
 
     }
 
@@ -155,7 +151,6 @@ public final class TicketInfo implements SerializableRead, Externalizable {
         attributes = (Properties) in.readObject();
         m_aLines = (List<TicketLineInfo>) in.readObject();
         m_CouponLines = (CouponSet) in.readObject();
-        m_nosc = (String) in.readObject();
         m_sActiveCash = null;
         payments = new ArrayList<>();
         taxes = null;
@@ -227,7 +222,7 @@ public final class TicketInfo implements SerializableRead, Externalizable {
             t.payments.add(p.copyPayment());
         }
         t.oldTicket = oldTicket;
-        t.m_nosc = m_nosc;
+
         // taxes are not copied, must be calculated again.
         return t;
     }
@@ -382,14 +377,6 @@ public final class TicketInfo implements SerializableRead, Externalizable {
 
     public void setDate(java.util.Date dDate) {
         m_dDate = dDate;
-    }
-
-    public String getNoSC() {
-        return m_nosc;
-    }
-
-    public void setNoSC(String value) {
-        m_nosc = value;
     }
 
     public UserInfo getUser() {

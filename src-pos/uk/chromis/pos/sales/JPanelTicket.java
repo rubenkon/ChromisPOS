@@ -2809,9 +2809,6 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
 
     private void m_jDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_jDeleteActionPerformed
         int i = m_ticketlines.getSelectedIndex();
-        if (m_oTicket.getLine(i).getProductID().equals("sc999-001")) {
-            m_oTicket.setNoSC("1");
-        }
 
         if ((m_oTicket.getTicketType().equals(TicketType.REFUND)) && (!m_oTicket.getLine(i).isProductCom())) {
             JRefundLines.addBackLine(m_oTicket.getLine(i).printName(), m_oTicket.getLine(i).getMultiply(), m_oTicket.getLine(i).getPrice(), m_oTicket.getLine(i).getProperty("orgLine"));
