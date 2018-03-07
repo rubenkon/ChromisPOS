@@ -46,6 +46,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -2773,18 +2774,35 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                 Toolkit.getDefaultToolkit().beep();
             }
         } else {
-            try {
-                TicketLineInfo newline = JProductLineEdit.showMessage(this, m_App, m_oTicket.getLine(i));
-                if (newline != null) {
+           JFrame frame = new JFrame();
+           JReduceLine dlgReduce = new JReduceLine( frame, true, m_oTicket.getLine(i).getPriceTax() );
+           dlgReduce.setVisible(true);
+           
+           if( dlgReduce.hasPriceChanged() ) {
+               TicketLineInfo oLine = m_oTicket.getLine(i);
+               Double discount = dlgReduce.getReduction();
+               oLine.setPriceTax( oLine.getPriceTax() - discount );
+               oLine.setDiscountAmount( discount );
+               oLine.setDiscounted( "yes" );
+
+               paintTicketLine(i, m_oTicket.getLine(i) );
+               if (m_oTicket.getLine(i).getUpdated()) {
+                   reLoadCatalog();
+               }
+           }
+           
+//            try {
+//                TicketLineInfo newline = JProductLineEdit.showMessage(this, m_App, m_oTicket.getLine(i));
+//                if (newline != null) {
                     // line has been modified
-                    paintTicketLine(i, newline);
-                    if (newline.getUpdated()) {
-                        reLoadCatalog();
-                    }
-                }
-            } catch (BasicException e) {
-                new MessageInf(e).show(this);
-            }
+//                    paintTicketLine(i, newline);
+//                    if (newline.getUpdated()) {
+//                        reLoadCatalog();
+//                    }
+//                }
+//            } catch (BasicException e) {
+//                new MessageInf(e).show(this);
+//            }
         }
         AutoLogoff.getInstance().activateTimer();
     }//GEN-LAST:event_m_jEditLineActionPerformed
