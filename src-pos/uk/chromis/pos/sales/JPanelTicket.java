@@ -196,9 +196,6 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
         dlPromotions = (DataLogicPromotions) app.getBean("uk.chromis.pos.promotion.DataLogicPromotions");
         m_promotionSupport = new PromotionSupport(this, dlSales, dlPromotions);
 
-        if (!m_App.getDeviceScale().existsScale()) {
-            m_jbtnScale.setVisible(false);
-        }
         if (AppConfig.getInstance().getBoolean("till.amountattop")) {
             m_jPanEntries.remove(jPanel9);
             m_jPanEntries.remove(m_jNumberKey);
@@ -447,6 +444,9 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
 
         boolean bHide = "false".equals(m_jbtnconfig.getProperty("attributesvisible"));
         jEditAttributes.setVisible( !bHide );
+        if( "false".equals(m_jbtnconfig.getProperty("scalevisible"))) {
+            m_jbtnScale.setVisible(false);
+        }
 
         m_jEditLine.setVisible(true);
         m_jList.setVisible(true);
