@@ -26,17 +26,26 @@ import uk.chromis.pos.forms.DataLogicSystem;
 
 boolean isCash = false;
 String change = "";
+String tendered = "";
+String message = "";
+
 PaymentInfo p = ticket.payments.getFirst();
 
 if ("cash".equals(p.getName())) {
     isCash = true;
     change = p.printChange();
+    tendered = p.printTendered();
 }
 
 if(isCash) {
     new Thread(new Runnable() {
          void run() {
-            ticket.showMessage( "Cash Payment", "Change: " + change, 30 );
+            message = "<html><p style=\"text-align:center\">Change: " + change;
+            if( ticket.getDiscounts() > 0) {
+              message = message + " <br>Discounts: " + ticket.printDiscounts();
+           }
+          message=message +"</p></html>";
+            ticket.showMessage( "Cash Payment", message, 30 );
 
             try {
                 m_TTP.printTicket(dlSystem.getResourceAsXML("Display.Message"));

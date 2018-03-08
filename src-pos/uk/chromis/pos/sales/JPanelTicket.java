@@ -1763,14 +1763,9 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                                     ? "Printer.Ticket"
                                     : "Printer.Ticket2", ticket, ticketext);
 
-//                            if (m_oTicket.getLoyaltyCardNumber() != null){
-// add points to the card
-//                                System.out.println("Point added to card = " + ticket.getTotal()/100);
-// reset card pointer                                
-                            //  loyaltyCardNumber = null;
-//                            }
                             resultok = true;
-// if restaurant clear any customer name in table for this table once receipt is printed
+
+                            // if restaurant clear any customer name in table for this table once receipt is printed
                             if ("restaurant".equals(AppConfig.getInstance().getProperty("machine.ticketsbag")) && !ticket.getOldTicket()) {
                                 restDB.clearCustomerNameInTable(ticketext.toString());
                                 restDB.clearWaiterNameInTable(ticketext.toString());

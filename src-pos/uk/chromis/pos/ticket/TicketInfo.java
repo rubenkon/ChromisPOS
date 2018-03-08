@@ -813,13 +813,15 @@ public final class TicketInfo implements SerializableRead, Externalizable {
         panel.add(Box.createRigidArea(new Dimension(450,20)));
 
         final JDialog dialog = new JDialog( (Frame)null, title, true );
-        dialog.setSize(450, 200);
+        dialog.setSize(450, 250);
         dialog.setLocationRelativeTo(null);
         
         JLabel FontText = new JLabel(message);
         FontText.setFont (new Font ( "Arial", Font.BOLD, 36) );
         FontText.setSize(450, 100);
         FontText.setAlignmentX(Component.CENTER_ALIGNMENT);
+        FontText.setHorizontalTextPosition(JLabel.CENTER);
+        FontText.setHorizontalAlignment(JLabel.CENTER);
         panel.add( FontText );
 
         panel.add(Box.createRigidArea(new Dimension(450,20)));
