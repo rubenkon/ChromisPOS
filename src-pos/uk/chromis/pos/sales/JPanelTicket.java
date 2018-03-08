@@ -442,9 +442,12 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                     }
                 }
         }
-
+        
         m_jNumberKey.setEnabled(true);
-        jEditAttributes.setVisible(true);
+
+        boolean bHide = "false".equals(m_jbtnconfig.getProperty("attributesvisible"));
+        jEditAttributes.setVisible( !bHide );
+
         m_jEditLine.setVisible(true);
         m_jList.setVisible(true);
 
