@@ -813,7 +813,7 @@ public final class TicketInfo implements SerializableRead, Externalizable {
         panel.add(Box.createRigidArea(new Dimension(450,20)));
 
         final JDialog dialog = new JDialog( (Frame)null, title, true );
-        dialog.setSize(450, 250);
+        dialog.setSize(450, 270);
         dialog.setLocationRelativeTo(null);
         
         JLabel FontText = new JLabel(message);
