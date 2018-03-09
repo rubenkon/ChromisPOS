@@ -46,6 +46,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -195,9 +196,6 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
         dlPromotions = (DataLogicPromotions) app.getBean("uk.chromis.pos.promotion.DataLogicPromotions");
         m_promotionSupport = new PromotionSupport(this, dlSales, dlPromotions);
 
-        if (!m_App.getDeviceScale().existsScale()) {
-            m_jbtnScale.setVisible(false);
-        }
         if (AppConfig.getInstance().getBoolean("till.amountattop")) {
             m_jPanEntries.remove(jPanel9);
             m_jPanEntries.remove(m_jNumberKey);
@@ -441,9 +439,15 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                     }
                 }
         }
-
+        
         m_jNumberKey.setEnabled(true);
-        jEditAttributes.setVisible(true);
+
+        boolean bHide = "false".equals(m_jbtnconfig.getProperty("attributesvisible"));
+        jEditAttributes.setVisible( !bHide );
+        if( "false".equals(m_jbtnconfig.getProperty("scalevisible"))) {
+            m_jbtnScale.setVisible(false);
+        }
+
         m_jEditLine.setVisible(true);
         m_jList.setVisible(true);
 
@@ -1759,14 +1763,9 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                                     ? "Printer.Ticket"
                                     : "Printer.Ticket2", ticket, ticketext);
 
-//                            if (m_oTicket.getLoyaltyCardNumber() != null){
-// add points to the card
-//                                System.out.println("Point added to card = " + ticket.getTotal()/100);
-// reset card pointer                                
-                            //  loyaltyCardNumber = null;
-//                            }
                             resultok = true;
-// if restaurant clear any customer name in table for this table once receipt is printed
+
+                            // if restaurant clear any customer name in table for this table once receipt is printed
                             if ("restaurant".equals(AppConfig.getInstance().getProperty("machine.ticketsbag")) && !ticket.getOldTicket()) {
                                 restDB.clearCustomerNameInTable(ticketext.toString());
                                 restDB.clearWaiterNameInTable(ticketext.toString());
@@ -2773,18 +2772,35 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                 Toolkit.getDefaultToolkit().beep();
             }
         } else {
-            try {
-                TicketLineInfo newline = JProductLineEdit.showMessage(this, m_App, m_oTicket.getLine(i));
-                if (newline != null) {
+           JFrame frame = new JFrame();
+           JReduceLine dlgReduce = new JReduceLine( frame, true, m_oTicket.getLine(i).getPriceTax() );
+           dlgReduce.setVisible(true);
+           
+           if( dlgReduce.hasPriceChanged() ) {
+               TicketLineInfo oLine = m_oTicket.getLine(i);
+               Double discount = dlgReduce.getReduction();
+               oLine.setPriceTax( oLine.getPriceTax() - discount );
+               oLine.setDiscountAmount( discount );
+               oLine.setDiscounted( "yes" );
+
+               paintTicketLine(i, m_oTicket.getLine(i) );
+               if (m_oTicket.getLine(i).getUpdated()) {
+                   reLoadCatalog();
+               }
+           }
+           
+//            try {
+//                TicketLineInfo newline = JProductLineEdit.showMessage(this, m_App, m_oTicket.getLine(i));
+//                if (newline != null) {
                     // line has been modified
-                    paintTicketLine(i, newline);
-                    if (newline.getUpdated()) {
-                        reLoadCatalog();
-                    }
-                }
-            } catch (BasicException e) {
-                new MessageInf(e).show(this);
-            }
+//                    paintTicketLine(i, newline);
+//                    if (newline.getUpdated()) {
+//                        reLoadCatalog();
+//                    }
+//                }
+//            } catch (BasicException e) {
+//                new MessageInf(e).show(this);
+//            }
         }
         AutoLogoff.getInstance().activateTimer();
     }//GEN-LAST:event_m_jEditLineActionPerformed
@@ -2809,9 +2825,6 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
 
     private void m_jDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_jDeleteActionPerformed
         int i = m_ticketlines.getSelectedIndex();
-        if (m_oTicket.getLine(i).getProductID().equals("sc999-001")) {
-            m_oTicket.setNoSC("1");
-        }
 
         if ((m_oTicket.getTicketType().equals(TicketType.REFUND)) && (!m_oTicket.getLine(i).isProductCom())) {
             JRefundLines.addBackLine(m_oTicket.getLine(i).printName(), m_oTicket.getLine(i).getMultiply(), m_oTicket.getLine(i).getPrice(), m_oTicket.getLine(i).getProperty("orgLine"));

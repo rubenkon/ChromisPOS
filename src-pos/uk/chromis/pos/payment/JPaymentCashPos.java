@@ -24,7 +24,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.SwingConstants;
@@ -111,10 +110,10 @@ public class JPaymentCashPos extends javax.swing.JPanel implements JPaymentInter
     public PaymentInfo executePayment() {
         if (m_dPaid - m_dTotal >= 0.0) {
             // pago completo
-            return new PaymentInfoCash_original(m_dTotal, m_dPaid);
+            return new PaymentInfoCash(m_dTotal, m_dPaid, m_dPaid);
         } else {
             // pago parcial
-            return new PaymentInfoCash_original(m_dPaid, m_dPaid);
+            return new PaymentInfoCash(m_dPaid, m_dPaid, m_dPaid);
         }        
     }
 

@@ -73,7 +73,7 @@ public class AutoLogoff implements ActionListener, AWTEventListener {
      * 
      */
     public void start() {
-        if (this.timer) {
+        if (this.timer && LogoffTimer != null ) {
             this.running = true;
             LogoffTimer.setRepeats(false);
             LogoffTimer.start();
@@ -82,10 +82,11 @@ public class AutoLogoff implements ActionListener, AWTEventListener {
     }
 
     public void stop() {
-        if (this.timer) {
+        if (this.timer ) {
             this.running = false;
             Toolkit.getDefaultToolkit().removeAWTEventListener(this);
-            LogoffTimer.stop();
+            if( LogoffTimer != null ) 
+                LogoffTimer.stop();
         }
     }
 
@@ -119,7 +120,7 @@ public class AutoLogoff implements ActionListener, AWTEventListener {
     }
 
     public void restartTimer() {
-        if (this.timer) {
+        if (this.timer && LogoffTimer != null) {
             LogoffTimer.restart();
         }
     }

@@ -111,5 +111,7 @@
 
     <!-- <taxcategoryid value="001"/> -->
     <!-- <pricevisible value="true" /> -->
-         
+    <!-- <attributesvisible value="false" /> -->
+    <!-- <scalevisible value="false" /> -->
+
 </configuration>
