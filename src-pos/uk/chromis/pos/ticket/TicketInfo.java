@@ -808,12 +808,11 @@ public final class TicketInfo implements SerializableRead, Externalizable {
         BoxLayout layout = new BoxLayout( panel, BoxLayout.Y_AXIS );
 
         panel.setLayout( layout );
-        panel.setPreferredSize( new Dimension(450,150));
+        panel.setPreferredSize( new Dimension(450,230));
 
         panel.add(Box.createRigidArea(new Dimension(450,20)));
 
         final JDialog dialog = new JDialog( (Frame)null, title, true );
-        dialog.setSize(450, 270);
         dialog.setLocationRelativeTo(null);
         
         JLabel FontText = new JLabel(message);
@@ -854,6 +853,7 @@ public final class TicketInfo implements SerializableRead, Externalizable {
         panel.add( bOK );
 
         dialog.add( panel );
+        dialog.pack();
         if( seconds > 0 ) {
             Timer timer = new Timer( seconds * 1000, new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
