@@ -18,6 +18,7 @@
 //    along with Chromis POS.  If not, see <http://www.gnu.org/licenses/>.
 package uk.chromis.pos.ticket;
 
+import java.awt.Dimension;
 import java.util.List;
 import uk.chromis.basic.BasicException;
 import uk.chromis.data.gui.ComboBoxValModel;
@@ -45,15 +46,35 @@ public class ProductFilterSales extends javax.swing.JPanel implements EditorCrea
      *
      * @param dlSales
      * @param jKeys
+     * @param bSimple
      */
-    public ProductFilterSales(DataLogicSales dlSales, JEditorKeys jKeys) {
+    public ProductFilterSales(DataLogicSales dlSales, JEditorKeys jKeys, boolean bSimple ) {
         initComponents();
+        
+        m_sentcat = dlSales.getCategoriesList();
 
-        m_jtxtBarCode.addEditorKeys(jKeys);
+        if( bSimple ) {
+            m_jtxtBarCode.setVisible(false);
+            m_jPriceBuy.setVisible(false);
+            m_jPriceSell.setVisible(false);
+            m_jStockUnits.setVisible(false);
+            m_jCboPriceBuy.setVisible(false);
+            m_jCboPriceSell.setVisible(false);
+            m_jCboStockUnits.setVisible(false);
+            jLabel1.setVisible(false);
+            jLabel3.setVisible(false);
+            jLabel4.setVisible(false);
+            jLabel6.setVisible(false);
+            jButtonMore.setVisible(true);
+            this.setPreferredSize( new Dimension(370,70) );
+        } else {
+            jButtonMore.setVisible(false);
+        }
+        
+        m_jtxtBarCode.addEditorKeys(jKeys);        
         m_jtxtName.addEditorKeys(jKeys);
 
         // El modelo de categorias
-        m_sentcat = dlSales.getCategoriesList();
         m_CategoryModel = new ComboBoxValModel();
 
         m_jCboPriceBuy.setModel(ListQBFModelNumber.getMandatoryNumber());
@@ -147,6 +168,7 @@ public class ProductFilterSales extends javax.swing.JPanel implements EditorCrea
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jButtonMore = new javax.swing.JButton();
         m_jtxtBarCode = new uk.chromis.editor.JEditorString();
         m_jtxtName = new uk.chromis.editor.JEditorString();
         m_jCategory = new javax.swing.JComboBox();
@@ -166,6 +188,15 @@ public class ProductFilterSales extends javax.swing.JPanel implements EditorCrea
         setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         setPreferredSize(new java.awt.Dimension(370, 200));
         setLayout(null);
+
+        jButtonMore.setText("...");
+        jButtonMore.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonMoreActionPerformed(evt);
+            }
+        });
+        add(jButtonMore);
+        jButtonMore.setBounds(360, 10, 30, 25);
 
         m_jtxtBarCode.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         add(m_jtxtBarCode);
@@ -246,8 +277,25 @@ public class ProductFilterSales extends javax.swing.JPanel implements EditorCrea
 
     }//GEN-LAST:event_m_jCboPriceBuyActionPerformed
 
+    private void jButtonMoreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonMoreActionPerformed
+        m_jtxtBarCode.setVisible(true);
+        m_jPriceBuy.setVisible(true);
+        m_jPriceSell.setVisible(true);
+        m_jStockUnits.setVisible(true);
+        m_jCboPriceBuy.setVisible(true);
+        m_jCboPriceSell.setVisible(true);
+        m_jCboStockUnits.setVisible(true);
+        jLabel1.setVisible(true);
+        jLabel3.setVisible(true);
+        jLabel4.setVisible(true);
+        jLabel6.setVisible(true);
+        jButtonMore.setVisible(false);
+        this.setPreferredSize( new Dimension(370,200) );
+    }//GEN-LAST:event_jButtonMoreActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonMore;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

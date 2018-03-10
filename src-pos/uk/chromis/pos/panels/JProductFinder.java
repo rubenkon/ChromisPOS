@@ -48,6 +48,7 @@ public class JProductFinder extends javax.swing.JDialog {
     public final static int PRODUCT_NORMAL = 1;
     public final static int PRODUCT_AUXILIAR = 2;
     public final static int PRODUCT_RECIPE = 3;
+    public final static int PRODUCT_SIMPLE = 4;
     
     /** Creates new form JProductFinder */
     private JProductFinder(java.awt.Frame parent, boolean modal) {
@@ -60,18 +61,19 @@ public class JProductFinder extends javax.swing.JDialog {
     
     private static int PRODUCT_FINDER_LIMIT = 1000;
     
-    private ProductInfoExt init(DataLogicSales dlSales, int productsType) {
+    private ProductInfoExt init(DataLogicSales dlSales, int productsType ) {
 
         initComponents();
         
         jScrollPane1.getVerticalScrollBar().setPreferredSize(new Dimension(35, 35));
 
         //ProductFilter jproductfilter = new ProductFilter(app);
-        ProductFilterSales jproductfilter = new ProductFilterSales(dlSales, m_jKeys);
+        ProductFilterSales jproductfilter = new ProductFilterSales(dlSales, m_jKeys, (productsType==PRODUCT_SIMPLE) );
         jproductfilter.activate();
         m_jProductSelect.add(jproductfilter, BorderLayout.CENTER);
         switch (productsType) {
             case PRODUCT_NORMAL:
+            case PRODUCT_SIMPLE:
                 lpr = new ListProviderCreator(dlSales.getProductListNormal( PRODUCT_FINDER_LIMIT ), jproductfilter);
                 break;
             case PRODUCT_AUXILIAR:               
@@ -113,7 +115,7 @@ public class JProductFinder extends javax.swing.JDialog {
      * @return
      */
     public static ProductInfoExt showMessage(Component parent, DataLogicSales dlSales) {
-        return showMessage(parent, dlSales, PRODUCT_ALL);
+        return showMessage(parent, dlSales, PRODUCT_SIMPLE);
     }
 
     /**
