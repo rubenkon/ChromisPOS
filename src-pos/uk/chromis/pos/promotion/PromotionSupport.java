@@ -214,7 +214,8 @@ public class PromotionSupport {
         int count = 0;
 
         for (TicketLineInfo line : ticket.getLines()) {
-            if (bIncludePromotionAdded || line.isPromotionAdded() == false) {
+            if( line.getReduced() == false &&
+                (bIncludePromotionAdded || line.isPromotionAdded() == false) ) {
                 String id = line.getPromotionId();
                 if (id != null && id.contentEquals(promotion.getID())) {
                     ++count;
@@ -231,7 +232,8 @@ public class PromotionSupport {
         Double count = 0.0;
 
         for (TicketLineInfo line : ticket.getLines()) {
-            if (bIncludePromotionAdded || line.isPromotionAdded() == false) {
+            if( line.getReduced() == false &&
+                (bIncludePromotionAdded || line.isPromotionAdded() == false) ) {
                 String id = line.getPromotionId();
                 if (id != null && id.contentEquals(promotion.getID())) {
                     count += line.getMultiply();
@@ -308,7 +310,8 @@ public class PromotionSupport {
 
         for (int i = 0; i < ticket.getLinesCount(); ++i) {
             TicketLineInfo line = ticket.getLines().get(i);
-            if (bIncludePromotionAdded || line.isPromotionAdded() == false) {
+            if( line.getReduced() == false &&
+                (bIncludePromotionAdded || line.isPromotionAdded() == false) ) {
                 if (promotion.getAllProducts()) {
                     aIndexes.add(new LineList(i, line));
                 } else {
@@ -332,7 +335,8 @@ public class PromotionSupport {
 
         for (int i = 0; i < ticket.getLinesCount(); ++i) {
             TicketLineInfo line = ticket.getLines().get(i);
-            if (bIncludePromotionAdded || line.isPromotionAdded() == false) {
+            if( line.getReduced() == false &&
+                (bIncludePromotionAdded || line.isPromotionAdded() == false) ) {
                 String id = line.getProductID();
                 if (id != null && id.contentEquals(productID)) {
                     String promoid = line.getPromotionId();
@@ -376,7 +380,8 @@ public class PromotionSupport {
                 TicketLineInfo line = ticket.getLine(i);
                 String id = line.getPromotionId();
                 if (id != null) {
-                    if (id.contentEquals(promotionid)) {
+                    if( line.getReduced() == false &&
+                        (id.contentEquals(promotionid)) ) {
                         DiscountProductPercent(ticket, i, sDiscountMessage, discountrate);
                     }
                 }
@@ -391,8 +396,9 @@ public class PromotionSupport {
             String sDiscountMessage, Double discountrate) {
 
         TicketLineInfo productline = ticket.getLine(lineIndex);
-        if (productline.isPromotionAdded() == false
-                && sYes.contentEquals(productline.getDiscounted()) == false) {
+        if (productline.isPromotionAdded() == false &&
+                productline.getReduced() == false &&
+                sYes.contentEquals(productline.getDiscounted()) == false) {
 
             double discount = (intPart(productline.getPrice() * discountrate)
                     / -100d);
@@ -421,8 +427,9 @@ public class PromotionSupport {
             Double discountrate ) {
 
         TicketLineInfo productline = ticket.getLine(lineIndex);
-        if (productline.isPromotionAdded() == false
-                && sYes.contentEquals(productline.getDiscounted()) == false) {
+        if( productline.getReduced() == false &&
+            (productline.isPromotionAdded() == false
+                && sYes.contentEquals(productline.getDiscounted()) == false) ) {
 
             Double setPrice;
             Double setQty;
@@ -568,7 +575,8 @@ public class PromotionSupport {
         TicketLineInfo productline = ticket.getLine(index);
         if (productline != null && promotion != null) {
             String id = productline.getPromotionId();
-            if (id != null && promotion.getID().contentEquals(id)) {
+            if( productline.getReduced() == false &&
+                (id != null && promotion.getID().contentEquals(id)) ) {
                 return true;
             }
         }
