@@ -680,7 +680,7 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
             } else {
                 
                 // Apply any customer discount
-                if( oLine.canDiscount() && m_oTicket.getDiscount() > 0.0 ) {
+                if( oLine.getCanDiscount() && m_oTicket.getDiscount() > 0.0 ) {
                    Double discount = oLine.getPrice() * m_oTicket.getDiscount();
                    oLine.setPrice( oLine.getPrice() - discount );
                    oLine.setDiscountAmount( includeTaxes( oLine.getProductTaxCategoryID(), discount ) );
@@ -1109,7 +1109,7 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                         
                         // Apply this discount to all ticket lines
                         for (TicketLineInfo oLine : m_oTicket.getLines()) {
-                            if( oLine.canDiscount() ) {
+                            if( oLine.getCanDiscount() ) {
                                 Double discount = oLine.getPrice() * m_oTicket.getDiscount();
                                 oLine.setPrice( oLine.getPrice() - discount );
                                 oLine.setDiscountAmount( includeTaxes( oLine.getProductTaxCategoryID(), discount ) );
@@ -2782,6 +2782,8 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                oLine.setPriceTax( oLine.getPriceTax() - discount );
                oLine.setDiscountAmount( discount );
                oLine.setDiscounted( "yes" );
+               // This prevents promotion discounts on this line
+               oLine.setReduced( true );
 
                paintTicketLine(i, m_oTicket.getLine(i) );
                if (m_oTicket.getLine(i).getUpdated()) {
@@ -2920,7 +2922,7 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
 
                         // Apply this discount to all ticket lines
                         for (TicketLineInfo oLine : m_oTicket.getLines()) {
-                            if( oLine.canDiscount() ) {
+                            if( oLine.getCanDiscount() ) {
                                 Double discount = oLine.getPrice() * m_oTicket.getDiscount();
                                 oLine.setPrice( oLine.getPrice() - discount );
                                 oLine.setDiscountAmount( includeTaxes( oLine.getProductTaxCategoryID(), discount ) );

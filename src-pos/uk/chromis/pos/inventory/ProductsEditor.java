@@ -42,6 +42,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import org.apache.commons.lang.StringUtils;
 import uk.chromis.basic.BasicException;
 import uk.chromis.data.gui.ComboBoxValModel;
 import uk.chromis.data.loader.SentenceList;
@@ -1125,6 +1126,7 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
         jLabel36 = new javax.swing.JLabel();
         jComboBoxPromotion = new javax.swing.JComboBox();
         jCheckBoxPromotion = new eu.hansolo.custom.SteelCheckBox();
+        jButton2 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
         m_jstockcost = new javax.swing.JTextField();
@@ -1358,6 +1360,19 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
         });
         jPanel1.add(jCheckBoxPromotion);
         jCheckBoxPromotion.setBounds(130, 280, 30, 30);
+
+        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/uk/chromis/images/encrypted.png"))); // NOI18N
+        jButton2.setToolTipText(bundle.getString("tiptext.createkey")); // NOI18N
+        jButton2.setMaximumSize(new java.awt.Dimension(64, 32));
+        jButton2.setMinimumSize(new java.awt.Dimension(64, 32));
+        jButton2.setPreferredSize(new java.awt.Dimension(64, 32));
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+        jPanel1.add(jButton2);
+        jButton2.setBounds(410, 40, 64, 32);
 
         jTabbedPane1.addTab(AppLocal.getIntString("label.prodgeneral"), jPanel1); // NOI18N
 
@@ -1634,7 +1649,7 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
         jPanel7.setLayout(null);
 
         jPanel7.add(jPropertyValueCombo);
-        jPropertyValueCombo.setBounds(0, 0, 250, 24);
+        jPropertyValueCombo.setBounds(0, 0, 250, 20);
 
         jPropertyValueText.setText("jTextField1");
         jPanel7.add(jPropertyValueText);
@@ -1814,7 +1829,22 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
 
     }//GEN-LAST:event_jPropertyAddButtonActionPerformed
 
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        String code = "";
+        String name = null;
+        do {
+            code = BarcodeValidator.CreateRandomBarcode();
+            try {
+                name = m_dlSales.getProductNameByCode(code);
+            } catch (BasicException ex) {
+            }
+        } while( ! StringUtils.isBlank(name) );
+            
+        m_jCode.setText( code );        
+    }//GEN-LAST:event_jButton2ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButtonHTML;
     private eu.hansolo.custom.SteelCheckBox jCheckBoxPromotion;
     private javax.swing.JComboBox jComboBoxPromotion;

@@ -117,6 +117,7 @@ public class TicketLineInfo implements SerializableWrite, SerializableRead, Seri
 
             attributes.setProperty("product.discounted", product.getDiscounted() == null ? "no" : product.getDiscounted());
             attributes.setProperty("product.candiscount", product.getCanDiscount() ? "true" : "false");
+            attributes.setProperty("product.reduced", "false");
 
             attributes.setProperty("product.ispack", product.getIsPack() ? "true" : "false");
 
@@ -476,10 +477,18 @@ public class TicketLineInfo implements SerializableWrite, SerializableRead, Seri
         return "true".equals(attributes.getProperty("product.alwaysavailable"));
     }
 
-    public boolean canDiscount() {
+    public boolean getCanDiscount() {
         return "true".equals(attributes.getProperty("product.candiscount"));
     }
 
+    public void setReduced( boolean bReduced ) {
+       attributes.setProperty("product.reduced", bReduced ? "true" : "false");
+    }
+    
+    public boolean getReduced() {
+        return "true".equals(attributes.getProperty("product.reduced"));
+    }
+    
     public String getDiscounted() {
         return (attributes.getProperty("product.discounted"));
     }
