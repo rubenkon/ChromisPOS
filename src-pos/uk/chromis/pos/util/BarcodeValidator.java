@@ -18,6 +18,8 @@
 //    along with Chromis POS.  If not, see <http://www.gnu.org/licenses/>.
 package uk.chromis.pos.util;
 
+import java.util.Random;
+
 /**
  *
  * @author John
@@ -28,6 +30,65 @@ public class BarcodeValidator {
 
     }
 
+    public static String CreateRandomBarcode() {
+ 
+        int min = 99900000;
+        int max = 99999999;
+
+        Random r = new Random();
+        int randomnumber = r.nextInt(max - min + 1) + min;
+
+        String code = String.valueOf(randomnumber);
+        
+        // Create a checkdigit
+        // this will be a running total
+        int sum = 0;
+
+        // loop through digits from right to left
+        for (int i = 0; i < code.length(); i++) {
+
+            // set ch to "current" character to be processed
+            char ch = code.charAt(code.length() - i - 1);
+
+            // our "digit" is calculated using ASCII value - 48
+            int digit = ch - 48;
+
+            // weight will be the current digit's contribution to
+            // the running total
+            int weight;
+            if (i % 2 == 0) {
+
+                // for alternating digits starting with the rightmost, we
+                // use our formula this is the same as multiplying x 2 and
+                // adding digits together for values 0 to 9. Using the
+                // following formula allows us to gracefully calculate a
+                // weight for non-numeric "digits" as well (from their
+                // ASCII value - 48).
+                weight = (2 * digit) - (digit / 5) * 9;
+
+            } else {
+
+                // even-positioned digits just contribute their ascii
+                // value minus 48
+                weight = digit;
+
+            }
+
+            // keep a running total of weights
+            sum += weight;
+
+        }
+        // avoid sum less than 10 (if characters below "0" allowed,
+        // this could happen)
+        sum = Math.abs(sum) + 10;
+        // check digit is amount needed to reach next number
+        // divisible by ten
+        int Checkdigit = (10 - (sum % 10)) % 10;
+
+        code = code + Checkdigit;
+        return code;
+    }
+    
     public static String BarcodeValidate(String barcode) {
 
         if (barcode.matches("[0-9]+")) {
