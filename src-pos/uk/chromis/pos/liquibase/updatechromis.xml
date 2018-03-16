@@ -1611,6 +1611,29 @@
                  
     </changeSet>
     
+    <changeSet author="Chromis POS" id="Add indexes for MySQL replication">  
+         <preConditions onFail="MARK_RAN">
+             <not>
+                <indexExists name="PN_INX_ID" />
+             </not>
+        </preConditions>
+        <createIndex indexName="PN_INX_ID" tableName="PICKUP_NUMBER" unique="true">
+            <column name="ID"/>
+        </createIndex>                     
+        <createIndex indexName="TN_INX_ID" tableName="TICKETSNUM" unique="true">
+            <column name="ID"/>
+        </createIndex>                     
+        <createIndex indexName="TNI_INX_ID" tableName="TICKETSNUM_INVOICE" unique="true">
+            <column name="ID"/>
+        </createIndex>                     
+        <createIndex indexName="TNP_INX_ID" tableName="TICKETSNUM_PAYMENT" unique="true">
+            <column name="ID"/>
+        </createIndex>                     
+        <createIndex indexName="TNR_INX_ID" tableName="TICKETSNUM_REFUND" unique="true">
+            <column name="ID"/>
+        </createIndex>                     
+    </changeSet>
+    
     <!-- ***************************************************************************************** -->
     <changeSet author="Chromis POS" id="Update to 0.56.6.6">    
         <update tableName="APPLICATIONS">
