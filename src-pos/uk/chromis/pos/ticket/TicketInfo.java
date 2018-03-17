@@ -808,16 +808,14 @@ public final class TicketInfo implements SerializableRead, Externalizable {
         BoxLayout layout = new BoxLayout( panel, BoxLayout.Y_AXIS );
 
         panel.setLayout( layout );
-        panel.setPreferredSize( new Dimension(450,230));
 
         panel.add(Box.createRigidArea(new Dimension(450,20)));
 
         final JDialog dialog = new JDialog( (Frame)null, title, true );
-        dialog.setLocationRelativeTo(null);
         
         JLabel FontText = new JLabel(message);
         FontText.setFont (new Font ( "Arial", Font.BOLD, 36) );
-        FontText.setSize(450, 100);
+//        FontText.setSize(450, 100);
         FontText.setAlignmentX(Component.CENTER_ALIGNMENT);
         FontText.setHorizontalTextPosition(JLabel.CENTER);
         FontText.setHorizontalAlignment(JLabel.CENTER);
@@ -837,8 +835,6 @@ public final class TicketInfo implements SerializableRead, Externalizable {
         });
         bOK.setAlignmentX(Component.CENTER_ALIGNMENT);
         
-        panel.add(Box.createRigidArea(new Dimension(450,20)));
-
         // Any key press will dispose the dialog - this avoids the issue of
         // a barcode scan for the next customer being thrown away. The first character
         // of the barcode will be lost but this should result in an error beep and
@@ -851,9 +847,11 @@ public final class TicketInfo implements SerializableRead, Externalizable {
             }
         } );
         panel.add( bOK );
+        panel.add(Box.createRigidArea(new Dimension(450,20)));
 
         dialog.add( panel );
         dialog.pack();
+        dialog.setLocationRelativeTo(null);
         if( seconds > 0 ) {
             Timer timer = new Timer( seconds * 1000, new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
