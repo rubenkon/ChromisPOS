@@ -46,7 +46,6 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -96,6 +95,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
 import uk.chromis.data.gui.JMessageDialog;
 import uk.chromis.pos.customers.CustomerInfo;
+import uk.chromis.pos.forms.AppUser;
 import uk.chromis.pos.printer.DeviceDisplayAdvance;
 import uk.chromis.pos.ticket.TicketType;
 import uk.chromis.pos.promotion.DataLogicPromotions;
@@ -1072,18 +1072,35 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
         try {
             CustomerInfoExt newcustomer = dlSales.findCustomerExt(sCode);
             if (newcustomer != null) {
-                if( m_oTicket.getDiscount() > 0.0 && m_oTicket.getLinesCount() > 0 ) {
-                    JOptionPane.showMessageDialog(null,
-                        AppLocal.getIntString("message.customerdiscountapplied"),
-                        sCode + ": " + newcustomer.getName(),
-                        JOptionPane.WARNING_MESSAGE);
-                }
+                customerCode = true;
+                
+                // Make sure staff are not serving themselves
+                AppUser user = m_App.getAppUserView().getUser();
+                if ( sCode.compareToIgnoreCase( user.getCard() ) == 0 ) {
+                    if (AppConfig.getInstance().getBoolean("till.customsounds")) {
+                        new PlayWave("error.wav").start(); // playing WAVE file 
+                    } else {
+                        Toolkit.getDefaultToolkit().beep();
+                    }
+                    Object[] options = {AppLocal.getIntString("Button.OK"),
+                        AppLocal.getIntString("Button.Cancel") };
 
+                    if (JOptionPane.showOptionDialog(this,
+                        AppLocal.getIntString("message.staffservingthemselves") ,
+                        sCode + ": " + newcustomer.getName(),
+                        JOptionPane.YES_NO_OPTION, 
+                        JOptionPane.WARNING_MESSAGE, null,
+                        options, options[1]) != 0) {
+                            newcustomer = null;
+                    }
+                }
+            }
+            
+            if (newcustomer != null) {
                 m_oTicket.setCustomer(newcustomer);
                 jButtonCustomerPay.setEnabled(newcustomer.getCurdebt() > 0 ? true: false);
 
                 m_jTicketId.setText(m_oTicket.getName(m_oTicketExt));
-                customerCode = true;
 
                 try {
                     m_TTP.printTicket( 
