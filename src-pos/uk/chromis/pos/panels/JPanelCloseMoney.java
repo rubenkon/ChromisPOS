@@ -742,10 +742,8 @@ public class JPanelCloseMoney extends JPanel implements JPanelView, BeanFactoryA
                 m_PaymentsToClose.setDateEnd(dNow);
 
                 // print report
-                printPayments("Printer.CloseCash");
-
-                // Mostramos el mensaje
-                JOptionPane.showMessageDialog(this, AppLocal.getIntString("message.closecashok"), AppLocal.getIntString("message.title"), JOptionPane.INFORMATION_MESSAGE);
+                printReport();
+                
             } catch (BasicException e) {
                 MessageInf msg = new MessageInf(MessageInf.SGN_NOTICE, AppLocal.getIntString("message.cannotclosecash"), e);
                 msg.show(this);
@@ -796,10 +794,8 @@ public class JPanelCloseMoney extends JPanel implements JPanelView, BeanFactoryA
                 m_PaymentsToClose.setDateEnd(dNow);
 
                 // print report
-                printPayments("Printer.CloseCash");
-
-                // Mostramos el mensaje
-                JOptionPane.showMessageDialog(this, AppLocal.getIntString("message.closecashok"), AppLocal.getIntString("message.title"), JOptionPane.INFORMATION_MESSAGE);
+                printReport();
+                
             } catch (BasicException e) {
                 MessageInf msg = new MessageInf(MessageInf.SGN_NOTICE, AppLocal.getIntString("message.cannotclosecash"), e);
                 msg.show(this);
@@ -814,6 +810,23 @@ public class JPanelCloseMoney extends JPanel implements JPanelView, BeanFactoryA
         }
     }//GEN-LAST:event_m_jCloseCashActionPerformed
 
+    private void printReport() {
+        
+        printPayments("Printer.CloseCash");
+
+        Object[] options = {AppLocal.getIntString("Button.OK"),
+                        AppLocal.getIntString("Button.Reprint") };
+                       
+        while (JOptionPane.showOptionDialog(this,
+            AppLocal.getIntString("message.closecashok") ,
+                AppLocal.getIntString("message.title"),
+                JOptionPane.YES_NO_OPTION, 
+            JOptionPane.INFORMATION_MESSAGE, null,
+            options, options[1]) != 0) {
+            printPayments("Printer.CloseCash");
+        }
+    }
+    
     private void m_jPrintCashActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_jPrintCashActionPerformed
 
         // print report
