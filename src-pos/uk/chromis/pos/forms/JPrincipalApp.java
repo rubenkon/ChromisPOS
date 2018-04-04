@@ -501,12 +501,6 @@ public class JPrincipalApp extends javax.swing.JPanel implements AppUserView {
                     m_aCreatedViews.put(sTaskClass, m_jMyView);
                 }
 
-                try {
-                    m_jMyView.activate();
-                } catch (BasicException e) {
-                    JMessageDialog.showMessage(this, new MessageInf(MessageInf.SGN_WARNING, AppLocal.getIntString("message.notactive"), e));
-                }
-
                 m_jLastView = m_jMyView;
 
                 setMenuVisible(getBounds().width > 800);
@@ -516,6 +510,12 @@ public class JPrincipalApp extends javax.swing.JPanel implements AppUserView {
                 String sTitle = m_jMyView.getTitle();
                 m_jPanelTitle.setVisible(sTitle != null);
                 m_jTitle.setText(sTitle);
+                
+                try {
+                    m_jMyView.activate();
+                } catch (BasicException e) {
+                    JMessageDialog.showMessage(this, new MessageInf(MessageInf.SGN_WARNING, AppLocal.getIntString("message.notactive"), e));
+                }
             }
         } else {
             JOptionPane.showMessageDialog(null,

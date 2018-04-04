@@ -139,6 +139,7 @@ public final class StockDiaryEditor extends javax.swing.JPanel
         m_jInCatalog.addActionListener(dirty);
 
         writeValueEOF();
+        
     }
 
     /**
@@ -150,6 +151,8 @@ public final class StockDiaryEditor extends javax.swing.JPanel
 
         m_LocationsModel = new ComboBoxValModel(m_sentlocations.list());
         m_jLocation.setModel(m_LocationsModel); // para que lo refresque   
+
+        m_jcodebar.requestFocusInWindow();
     }
 
     /**
