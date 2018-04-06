@@ -7,14 +7,12 @@ package uk.chromis.pos.util;
 
 import com.sun.javafx.application.PlatformImpl;
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.JFXPanel;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
@@ -29,14 +27,16 @@ public class SwingFXWebView extends JPanel {
     private Stage stage;  
     private WebView browser;  
     private JFXPanel jfxPanel;  
-    private JButton swingButton;  
+    private JButton okButton;  
+    private JButton cancelButton;  
     private WebEngine webEngine;  
     private String  url;
-  
-    public SwingFXWebView( String starturl ){  
-        initComponents();  
-        
+    private ActionListener mActionListener;
+    
+    public SwingFXWebView( String starturl, ActionListener actionListener ){  
         url = starturl;
+        mActionListener = actionListener;
+        initComponents();          
     }  
   
     private void initComponents(){  
@@ -47,25 +47,28 @@ public class SwingFXWebView extends JPanel {
         setLayout(new BorderLayout());  
         add(jfxPanel, BorderLayout.CENTER);  
          
-        swingButton = new JButton();  
-        swingButton.addActionListener(new ActionListener() {
+        okButton = new JButton();  
+        okButton.addActionListener(mActionListener);  
+        
+        JPanel jPanel = new JPanel();
+        jPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Platform.runLater(new Runnable() {
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("pos_messages");
+        okButton.setText( bundle.getString("Button.OK"));         
+        jPanel.add(okButton, BorderLayout.EAST );  
 
-                    @Override
-                    public void run() {
-                        webEngine.reload();
-                    }
-                });
-            }
-        });  
-        swingButton.setText("Reload");  
-         
-        add(swingButton, BorderLayout.SOUTH);  
+        cancelButton = new JButton();  
+        cancelButton.addActionListener(mActionListener);  
+        cancelButton.setText( bundle.getString("Button.Cancel"));         
+        jPanel.add(cancelButton, BorderLayout.WEST );  
+ 
+        add( jPanel, BorderLayout.SOUTH);  
     }     
      
+    public void setUrl( String url ) {
+        webEngine.load(url);
+    }
+    
     /** 
      * createScene 
      * 
@@ -80,10 +83,10 @@ public class SwingFXWebView extends JPanel {
                  
                 stage = new Stage();  
                  
-                stage.setTitle("Hello Java FX");  
+                stage.setTitle("ChromisPOS WebView");  
                 stage.setResizable(true);  
    
-                Group root = new Group();  
+                StackPane root = new StackPane();  
                 Scene scene = new Scene(root,80,20);  
                 stage.setScene(scene);  
                  
