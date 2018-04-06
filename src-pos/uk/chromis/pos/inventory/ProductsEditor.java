@@ -1876,11 +1876,17 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
     private void jBtnSupplierWebActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnSupplierWebActionPerformed
         if( webscraper == null ) {
             webscraper = new WebScrapeBookers();
+            webscraper.StartScraper( webscraper.getStartUrl( m_jCode.getText() ),
+                    new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    // User has pressed snapshot button
+                    webscraper.setVisible( false );               
+                }
+            });  
+            
         } else {
-            if(webscraper.isVisible() == false ) {
-                webscraper.setVisible(true);                
-            }
-            webscraper.requestFocusInWindow();
+            webscraper.findCode( m_jCode.getText() );            webscraper.setVisible( true );
         }
     }//GEN-LAST:event_jBtnSupplierWebActionPerformed
 
