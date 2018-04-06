@@ -6,8 +6,9 @@
 package uk.chromis.pos.inventory;
 
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import uk.chromis.pos.util.SwingFXWebView;
 
@@ -15,31 +16,41 @@ import uk.chromis.pos.util.SwingFXWebView;
  *
  * @author john
  */
-public class WebScrapeBookers extends JPanel {
+public class WebScrapeBookers extends JFrame {
     
     private String url;
-    private JFrame frame;
+    private SwingFXWebView WebView = null;
     
     public WebScrapeBookers() {
-        
-        url = getStartUrl();
+    }
+    
+    public void StartScraper( String starturl, ActionListener actionListener ) {
+        url = starturl;
         
         // Run this later:
         SwingUtilities.invokeLater(new Runnable() {  
             @Override
             public void run() {  
-                frame = new JFrame();  
+                
+                WebView = new SwingFXWebView( url, actionListener );  
                  
-                frame.getContentPane().add(new SwingFXWebView( url ));  
+                getContentPane().add( WebView );  
                  
-                frame.setMinimumSize(new Dimension(640, 480));  
-                frame.setVisible(true);  
+                setMinimumSize(new Dimension(1024, 768));  
+                setVisible(true);  
             }  
         });
     }
     
-    public String getStartUrl() {
-        return "http://www.booker.co.uk";
+    public void findCode( String code ) {
+        if( WebView != null ){
+            String url = getStartUrl( code );
+            WebView.setUrl( url );
+        }    
+    }
+    
+    public String getStartUrl( String code ) {
+        return "https://www.booker.co.uk/catalog/products.aspx?categoryName=Default%20Catalog&keywords=" + code;
     }
     
 }
