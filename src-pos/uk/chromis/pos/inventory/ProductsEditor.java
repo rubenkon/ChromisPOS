@@ -56,6 +56,7 @@ import uk.chromis.pos.sales.TaxesLogic;
 import uk.chromis.pos.util.BarcodeValidator;
 import uk.chromis.pos.ticket.ProductInfoExt;
 import uk.chromis.pos.util.AutoCompleteComboBox;
+import uk.chromis.pos.util.SwingFXWebView;
 
 /**
  *
@@ -86,6 +87,7 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
     private Boolean displayEdited = false;
     private String originalDisplay;
     private Properties m_PropertyOptions;
+    private WebScrapeBookers webscraper = null;
     
     /**
      * Creates new form JEditProduct
@@ -1175,6 +1177,8 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
         jPropertyValueCombo = new javax.swing.JComboBox<>();
         jPropertyValueText = new javax.swing.JTextField();
         jPropertyAddButton = new javax.swing.JButton();
+        jPanel6 = new javax.swing.JPanel();
+        jBtnSupplierWeb = new javax.swing.JButton();
 
         jLabel24.setText("jLabel24");
 
@@ -1184,7 +1188,7 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
 
         m_jTitle.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         m_jTitle.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        add(m_jTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 0, 330, 30));
+        add(m_jTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 0, 210, 30));
 
         jTabbedPane1.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
 
@@ -1649,7 +1653,7 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
         jPanel7.setLayout(null);
 
         jPanel7.add(jPropertyValueCombo);
-        jPropertyValueCombo.setBounds(0, 0, 250, 20);
+        jPropertyValueCombo.setBounds(0, 0, 250, 24);
 
         jPropertyValueText.setText("jTextField1");
         jPanel7.add(jPropertyValueText);
@@ -1690,6 +1694,32 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
         jPanel3.add(jPanelProperties, java.awt.BorderLayout.PAGE_START);
 
         jTabbedPane1.addTab(AppLocal.getIntString("label.properties"), jPanel3); // NOI18N
+
+        jBtnSupplierWeb.setText(bundle.getString("Button.Browser")); // NOI18N
+        jBtnSupplierWeb.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnSupplierWebActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jBtnSupplierWeb)
+                .addContainerGap(490, Short.MAX_VALUE))
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jBtnSupplierWeb)
+                .addContainerGap(356, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("Supplier", jPanel6);
 
         add(jTabbedPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 600, 420));
     }// </editor-fold>//GEN-END:initComponents
@@ -1843,7 +1873,19 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
         m_jCode.setText( code );        
     }//GEN-LAST:event_jButton2ActionPerformed
 
+    private void jBtnSupplierWebActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnSupplierWebActionPerformed
+        if( webscraper == null ) {
+            webscraper = new WebScrapeBookers();
+        } else {
+            if(webscraper.isVisible() == false ) {
+                webscraper.setVisible(true);                
+            }
+            webscraper.requestFocusInWindow();
+        }
+    }//GEN-LAST:event_jBtnSupplierWebActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jBtnSupplierWeb;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButtonHTML;
     private eu.hansolo.custom.SteelCheckBox jCheckBoxPromotion;
@@ -1884,6 +1926,7 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanelProperties;
     private javax.swing.JButton jPropertyAddButton;
