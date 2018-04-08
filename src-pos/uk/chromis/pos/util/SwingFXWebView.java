@@ -12,12 +12,24 @@ import java.io.IOException;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
+import java.net.CookieStore;
 import java.net.HttpCookie;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.ObservableList;
@@ -30,7 +42,6 @@ import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import org.jfree.chart.util.TextUtils;
   
 /** 
  * SwingFXWebView 
@@ -43,15 +54,19 @@ public class SwingFXWebView extends JPanel {
     private JButton okButton;  
     private JButton cancelButton;  
     private WebEngine webEngine;
-    CookieManager cookieManager;
-    private String  url;
+    private URI     startUri;
     private ActionListener mActionListener;
-    private String strCookies;
+    private String cookieFile;
+    CookieManager myCookieManager;
     
-    public SwingFXWebView( String starturl, String cookies, ActionListener actionListener ){  
-        url = starturl;
+    public SwingFXWebView( String startUrl, String cookies, ActionListener actionListener ){  
+        try {
+            startUri = new URI(startUrl);
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(SwingFXWebView.class.getName()).log(Level.SEVERE, null, ex);
+        }
         mActionListener = actionListener;
-        strCookies = cookies;
+        cookieFile = cookies;
         initComponents();          
     }  
   
@@ -80,48 +95,147 @@ public class SwingFXWebView extends JPanel {
  
         add( jPanel, BorderLayout.SOUTH);  
     }     
-     
 
-    public void setCookies( String cookies ) {
-        String[] aCookies = cookies.split(";");
-    
-        for (String s: aCookies) {
-            int pos1 = s.indexOf('@');
-            int pos2 = s.indexOf(':');
-            if( pos1 > 0 && pos2 > 0 ) {
-                String name = s.substring(0,pos1);
-                String domain = s.substring(pos1+1,pos2);
-                String value = s.substring(pos2+1);
+    private String CookieToString( HttpCookie cookie ) {
+        String strCookie = "";
+        String SEPARATOR = "#";
 
-                HttpCookie cook = new HttpCookie( name, value );
-                cookieManager.getCookieStore().add( URI.create(domain), cook);
-            }
-        }
-        strCookies = cookies;
+        String name = cookie.getName();
+        String value = "*";
+        if (cookie.getValue() != null && !cookie.getValue().contentEquals(""))
+                value = cookie.getValue();
+
+        String domain = "*";
+        if (cookie.getDomain() != null)
+                domain = cookie.getDomain();
+        String path = "*";
+        if (cookie.getPath() != null)
+                path = cookie.getPath();
+        int version = cookie.getVersion();
+        String ver = String.valueOf(version);
+        String expired = "*";
+        if (cookie.getMaxAge() != 0 ) 
+            expired = Long.toString(cookie.getMaxAge());
+
+        strCookie = name + SEPARATOR
+                + value + SEPARATOR
+                + domain + SEPARATOR
+                + path + SEPARATOR
+                + ver + SEPARATOR
+                + expired + SEPARATOR;
+        
+        return strCookie;
     }
     
-    public String getCookies() {
+    private HttpCookie CookieFromString( String strCookie ) {
+        HttpCookie cookie = null;
 
-        final List<HttpCookie> cookies = cookieManager.getCookieStore().getCookies();
+        int i = 0;
+        String name = null;
+        String value = null;
+        String domain = null;
+        String path = null;
+        String expired = null;
+        String version = null;
 
-        if (cookies != null && cookies.size() > 0) {
-            strCookies = "";
-            for( int n = 0; n < cookies.size(); ++n ) {
-                //While joining the Cookies, use ',' or ';' as needed. Most of the server are using ';'
-                if( n > 0 ) strCookies = strCookies + ";";
-                strCookies = strCookies + cookies.get(n).getName()
-                        + "@" + cookies.get(n).getDomain()
-                        + ":" + cookies.get(n).getValue();
+        StringTokenizer tokens = new StringTokenizer( strCookie, "#");
+        i++;
+        while (tokens.hasMoreTokens()) {
+            switch (i = tokens.countTokens()) {
+            case 6:
+                    name = tokens.nextToken();
+
+                    break;
+            case 5:
+                    value = tokens.nextToken();
+                    break;
+            case 4:
+                    domain = tokens.nextToken();
+                    break;
+            case 3:
+                    path = tokens.nextToken();
+                    break;
+            case 2:
+                    version = tokens.nextToken();
+                    break;
+            case 1:
+                    expired = tokens.nextToken();
+                    break;
+
             }
         }
-        return strCookies;
+        
+        if( name != null && value != null ) {
+            cookie = new HttpCookie( name, value );
+            if (value.contentEquals("*"))
+                    cookie.setValue(null);
+            cookie.setDomain(domain);
+            cookie.setPath(path);
+            cookie.setVersion(Integer.valueOf(version));
+            cookie.setMaxAge( Long.parseLong(expired) );
+        }
+        
+        return cookie;
     }
     
+    public void loadCookies( String cookiefile ) {
+        CookieManager manager = new CookieManager(null, CookiePolicy.ACCEPT_ALL);
+        Path p = Paths.get(cookiefile);
+
+        try {
+          for (String line : Files.readAllLines(p) ) {
+            String[] values = line.split("\\|");
+            URI uri = new URI(values[0]);
+
+            String[] actualValues = values[1].split(":");
+
+            if (actualValues.length < 2)
+              continue;
+
+            for (String header : actualValues[1].split("~")) {
+                HttpCookie cookie = CookieFromString(header);
+                if( cookie != null ) {
+                  manager.getCookieStore().add(uri, cookie );
+                }
+            }
+          }
+        } catch (IOException | URISyntaxException e) {
+            e.printStackTrace();
+        }
+
+        CookieHandler.setDefault(manager);    
+    }
+    
+    public void saveCookies( String cookiefile ) {
+        
+        CookieStore store = ((CookieManager) CookieHandler.getDefault()).getCookieStore();
+        try {
+            Path p = Paths.get(cookiefile);
+            Files.write( p, ("").getBytes(), StandardOpenOption.CREATE);
+
+            for (URI uri : store.getURIs()) {
+                Map<String, List<String>> map = CookieHandler.getDefault().get(uri, new HashMap<>());
+
+            Files.write( p, (uri + "|Cookie:").getBytes(), StandardOpenOption.APPEND);
+
+            for (HttpCookie cookie : store.get(uri)) {
+              if (cookie.hasExpired())
+                continue;
+
+              Files.write( p, (CookieToString(cookie) + "~").getBytes(), StandardOpenOption.APPEND);
+            }
+
+            Files.write( p, "\n".getBytes(), StandardOpenOption.APPEND);
+          }
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+    }
+
     public void setUrl( String newUrl ) {
-        url = newUrl;
         PlatformImpl.runLater(new Runnable() {
             @Override public void run() {
-                   webEngine.load(url);
+                   webEngine.load(newUrl);
             }
         });
     }
@@ -147,20 +261,19 @@ public class SwingFXWebView extends JPanel {
                 Scene scene = new Scene(root,80,20);  
                 stage.setScene(scene);  
 
-                cookieManager = new CookieManager();
-                cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
-                CookieHandler.setDefault(cookieManager);
-                
-                if( strCookies != null ) {
-                    setCookies( strCookies );
+                // Set the cookies into the default store
+                // before cteating and using our own store.
+                // This avoids issues with the java.net and sun versions
+                // of the CookieManager. Our store will inherit these cookies
+                if( cookieFile != null ) {
+                   loadCookies( cookieFile );
                 }
-                
+
                 // Set up the embedded browser:
                 browser = new WebView();
                 
                 webEngine = browser.getEngine();
-                URI uri = URI.create(url);
-                webEngine.load( url );
+                webEngine.load( startUri.toString() );
                 
                 ObservableList<Node> children = root.getChildren();
                 children.add(browser);                     
