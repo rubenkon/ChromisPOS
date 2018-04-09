@@ -56,7 +56,6 @@ import uk.chromis.pos.sales.TaxesLogic;
 import uk.chromis.pos.util.BarcodeValidator;
 import uk.chromis.pos.ticket.ProductInfoExt;
 import uk.chromis.pos.util.AutoCompleteComboBox;
-import uk.chromis.pos.util.SwingFXWebView;
 
 /**
  *
@@ -189,7 +188,7 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
         m_jPriceSellTax.getDocument().addDocumentListener(new PriceTaxManager());
         m_jTax.addActionListener(new PriceTaxManager());
         m_jmargin.getDocument().addDocumentListener(new MarginManager());
-        
+
         writeValueEOF();
     }
 
@@ -1876,7 +1875,7 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
     private void jBtnSupplierWebActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnSupplierWebActionPerformed
         if( webscraper == null ) {
             webscraper = new WebScrapeBookers();
-            webscraper.StartScraper( webscraper.getStartUrl(),
+            webscraper.StartScraper( webscraper.getSearchUrl(m_jCode.getText()),
                     new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -1885,12 +1884,11 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
                     webscraper.saveState();
                     webscraper.setVisible( false );               
                 }
-            });  
-            
+            });   
         } else {
             webscraper.findCode( m_jCode.getText() );
-            webscraper.setVisible( true );
         }
+        webscraper.setVisible( true );
     }//GEN-LAST:event_jBtnSupplierWebActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -85,7 +85,7 @@ public final class StockDiaryEditor extends javax.swing.JPanel
     private final AppView m_App;
     private final DataLogicSales m_dlSales;
     private final DataLogicSystem m_dlSystem;
-    
+    private JDlgEditProduct dlgEditProduct = null;
     private DirtyManager m_Dirty;
     
     /** Creates new form StockDiaryEditor
@@ -657,28 +657,28 @@ public final class StockDiaryEditor extends javax.swing.JPanel
         }
     }
 
-    
-    private void editProduct() {
-        if( warnChangesLost() ) {
+    private void createEditor() {
+        if( dlgEditProduct == null ) {
             JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
-            JDlgEditProduct dlg = new JDlgEditProduct( topFrame, true );
-            dlg.init( m_dlSales, m_dlSystem, m_Dirty, productid, null );
-            dlg.setCallbacks(this);
-            dlg.setVisible( true );
+            dlgEditProduct = new JDlgEditProduct( topFrame, false );
+            dlgEditProduct.init( m_dlSales, m_dlSystem, m_Dirty );
+            dlgEditProduct.setCallbacks(this);
         }
     }
-      
+
+    private void editProduct() {
+        if( warnChangesLost() ) {
+            createEditor();
+            dlgEditProduct.setProduct( productid, null );
+            dlgEditProduct.setVisible( true );
+        }
+    }
+    
     private void newProduct() {
         if( warnChangesLost() ) {
-
-            JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
-            JDlgEditProduct dlg = new JDlgEditProduct( topFrame, true );
-
-            String code = m_jcodebar.getText();
-
-            dlg.init( m_dlSales, m_dlSystem, m_Dirty, null, code );
-            dlg.setCallbacks(this);
-            dlg.setVisible( true );
+            createEditor();
+            dlgEditProduct.setProduct( null, m_jcodebar.getText() );
+            dlgEditProduct.setVisible( true );
         }
     }
     
