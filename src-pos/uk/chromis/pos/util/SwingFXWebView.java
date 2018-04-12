@@ -7,8 +7,11 @@ package uk.chromis.pos.util;
 
 import com.sun.javafx.application.PlatformImpl;
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import static java.awt.event.ActionEvent.ACTION_PERFORMED;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
@@ -26,7 +29,10 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Worker;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -36,6 +42,13 @@ import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
   
 /** 
  * SwingFXWebView 
@@ -232,6 +245,35 @@ public class SwingFXWebView extends JPanel {
             }
         });
     }
+
+    // Called when page has finished loading
+    public void onLoadComplete() {
+        
+        Document doc = webEngine.getDocument();
+       
+        String html = (String) webEngine.executeScript("document.documentElement.outerHTML");
+
+        int lprice = html.indexOf("<span>RRP:</span>")+18;
+        String sprice = html.substring( lprice, lprice + 10 );
+/*
+        try {
+             Transformer transformer = TransformerFactory.newInstance().newTransformer();
+             transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+             transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+             transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+
+             transformer.transform(new DOMSource(doc),
+                     new StreamResult(new OutputStreamWriter(System.out, "UTF-8")));
+        } catch (Exception ex) {
+             ex.printStackTrace();
+        }       
+*/
+        if( html != null ) {
+            mActionListener.actionPerformed( new ActionEvent( browser, ACTION_PERFORMED, html ) );
+        }
+    }
     
     /** 
      * createScene 
@@ -264,8 +306,22 @@ public class SwingFXWebView extends JPanel {
 
                 // Set up the embedded browser:
                 browser = new WebView();
-                
                 webEngine = browser.getEngine();
+  
+                webEngine.getLoadWorker().stateProperty().addListener(
+                    new ChangeListener<Worker.State>() {
+                    @Override
+                    public void changed(
+                      ObservableValue<? extends Worker.State> observable,
+                      Worker.State oldValue, Worker.State newValue ) {
+
+                      if( newValue != Worker.State.SUCCEEDED ) {
+                          return;
+                      }
+                      onLoadComplete();
+                    }
+                  } );
+
                 webEngine.load( startUri.toString() );
                 
                 ObservableList<Node> children = root.getChildren();

@@ -22,6 +22,7 @@ package uk.chromis.pos.inventory;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
+import static java.awt.event.ActionEvent.ACTION_PERFORMED;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -1879,10 +1880,13 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
                     new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    
-                    // User has pressed snapshot button
-                    webscraper.saveState();
-                    webscraper.setVisible( false );               
+                    if( e.getID() == ACTION_PERFORMED) {
+
+                    } else {
+                        // User has pressed snapshot button
+                        webscraper.saveState();
+                        webscraper.setVisible( false );               
+                    }
                 }
             });   
         } else {
