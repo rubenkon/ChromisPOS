@@ -33,6 +33,9 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.List;
@@ -167,6 +170,24 @@ public class JImageEditor extends javax.swing.JPanel {
         setImage(bi);
     }
 
+    public void LoadFromUrl( String url ) {
+
+        try
+        {
+            URL url1 = new URL(url);
+
+            URLConnection conn1 = url1.openConnection();
+            conn1.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+            InputStream in1 = conn1.getInputStream();
+
+            BufferedImage bi = ImageIO.read(in1);
+            setImage( resizeImage( bi ) );
+            
+        } catch (IOException e)
+        {
+        }        
+    }
+    
     /**
      *
      * @param img

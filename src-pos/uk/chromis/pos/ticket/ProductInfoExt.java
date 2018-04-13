@@ -27,8 +27,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import uk.chromis.pos.forms.AppLocal;
 import uk.chromis.pos.forms.DataLogicSales;
 
@@ -119,6 +117,46 @@ public class ProductInfoExt {
         m_rate = 0.0;
     }
 
+    public ProductInfoExt( ProductInfoExt copy ) {
+        m_ID = copy.m_ID;
+        m_sRef = copy.m_ID;
+        m_sCode = copy.m_sCode;
+        m_sCodetype = copy.m_sCodetype;
+        m_sName = copy.m_sName;
+        m_bCom = copy.m_bCom;
+        m_bScale = copy.m_bScale;
+        categoryid = copy.categoryid;
+        taxcategoryid = copy.taxcategoryid;
+        attributesetid = copy.attributesetid;
+        m_dPriceBuy = copy.m_dPriceBuy;
+        m_dPriceSell = copy.m_dPriceSell;
+        m_stockCost = copy.m_stockCost;
+        m_stockVolume = copy.m_stockVolume;
+        m_Image = copy.m_Image;
+        m_bKitchen = copy.m_bKitchen;
+        m_bService = copy.m_bService;
+        m_sDisplay = copy.m_sDisplay;
+        m_attributes = copy.m_attributes;
+        m_bVprice = copy.m_bVprice;
+        m_bVerpatrib = copy.m_bVerpatrib;
+        m_sTextTip = copy.m_sTextTip;
+        m_bWarranty = copy.m_bWarranty;
+        m_dStockUnits = copy.m_dStockUnits;
+        m_sAlias = copy.m_sAlias;
+        m_bAlwaysAvailable = copy.m_bAlwaysAvailable;
+        m_manageStock = copy.m_manageStock;
+        m_canDiscount = copy.m_canDiscount;
+        m_discounted = copy.m_discounted;
+        m_promotionid = copy.m_promotionid;
+        m_bCatalog = copy.m_bCatalog;
+        m_bRetired = copy.m_bRetired;
+        m_catorder = copy.m_catorder;
+        m_bPack = copy.m_bPack;
+        m_packquantity = copy.m_packquantity;
+        m_packproduct = copy.m_packproduct;
+        m_rate = copy.m_rate;
+    }
+    
     /**
      *
      * @return
@@ -203,10 +241,18 @@ public class ProductInfoExt {
         m_bService = bValue;
     }
 
+    public final void setVprice( Boolean b ) {
+        m_bVprice = b;
+    }
+    
     public final Boolean isVprice() {
         return m_bVprice;
     }
 
+    public final void setVerpatrib( Boolean b ) {
+        m_bVerpatrib = b;
+    }
+    
     public final Boolean isVerpatrib() {
         return m_bVerpatrib;
     }
@@ -313,7 +359,19 @@ public class ProductInfoExt {
     public final String getPromotionID() {
         return m_promotionid;
     }
+    
+    public final void setPromotionID( String id ) {
+        m_promotionid = id;
+    }
 
+    public final void setInCatalog( Boolean b ) {
+        m_bCatalog = b;
+    }
+    
+    public final void setRetired( Boolean b ) {
+        m_bRetired = b;
+    }
+    
     public final Boolean getInCatalog() {
         return m_bCatalog;
     }
@@ -324,6 +382,10 @@ public class ProductInfoExt {
     
     public final Double getCatOrder() {
         return m_catorder;
+    }
+    
+    public final void setCatOrder( Double d ) {
+        m_catorder = d;
     }
 
     public String printPriceSell() {
@@ -402,6 +464,10 @@ public class ProductInfoExt {
     
     public final Boolean getCanDiscount() {
         return m_canDiscount;
+    }
+
+    public final void setCanDiscount( Boolean b ) {
+        m_canDiscount = b;
     }
 
     public final String getDiscounted() {

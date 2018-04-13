@@ -11,7 +11,6 @@ import java.awt.event.ActionEvent;
 import static java.awt.event.ActionEvent.ACTION_PERFORMED;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
@@ -42,13 +41,7 @@ import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
   
 /** 
  * SwingFXWebView 
@@ -65,6 +58,7 @@ public class SwingFXWebView extends JPanel {
     private ActionListener mActionListener;
     private String cookieFile;
     CookieManager myCookieManager;
+    String pageSource = null;
     
     public SwingFXWebView( String startUrl, String cookies, ActionListener actionListener ){  
         try {
@@ -101,8 +95,14 @@ public class SwingFXWebView extends JPanel {
         jPanel.add(cancelButton, BorderLayout.WEST );  
  
         add( jPanel, BorderLayout.SOUTH);  
+        
+        enableOK( false );
     }     
 
+    public void enableOK( boolean bEnable ) {
+        okButton.setEnabled( bEnable );        
+    }
+    
     private String CookieToString( HttpCookie cookie ) {
         String strCookie = "";
         String SEPARATOR = "#";
@@ -246,32 +246,19 @@ public class SwingFXWebView extends JPanel {
         });
     }
 
+    public String getPageSource() {
+        return pageSource;
+    }
+           
     // Called when page has finished loading
     public void onLoadComplete() {
         
         Document doc = webEngine.getDocument();
        
-        String html = (String) webEngine.executeScript("document.documentElement.outerHTML");
+        pageSource = (String) webEngine.executeScript("document.documentElement.outerHTML");
 
-        int lprice = html.indexOf("<span>RRP:</span>")+18;
-        String sprice = html.substring( lprice, lprice + 10 );
-/*
-        try {
-             Transformer transformer = TransformerFactory.newInstance().newTransformer();
-             transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
-             transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-             transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-
-             transformer.transform(new DOMSource(doc),
-                     new StreamResult(new OutputStreamWriter(System.out, "UTF-8")));
-        } catch (Exception ex) {
-             ex.printStackTrace();
-        }       
-*/
-        if( html != null ) {
-            mActionListener.actionPerformed( new ActionEvent( browser, ACTION_PERFORMED, html ) );
+        if( pageSource != null ) {
+            mActionListener.actionPerformed( new ActionEvent( browser, ACTION_PERFORMED, "PageLoadComplete" ) );
         }
     }
     
