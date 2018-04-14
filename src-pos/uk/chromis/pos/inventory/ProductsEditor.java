@@ -274,6 +274,11 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
 
         txtProperties.setText( info.getPropertiesXml() );
 
+        if( m_jName.getText().isEmpty() ) {
+            m_jTitle.setText(AppLocal.getIntString("label.recordnew"));
+        } else {
+            m_jTitle.setText( m_jName.getText() );
+        }    
         setPriceSell(info.getPriceSell());
         calculateMargin();
         calculatePriceSellTax();
@@ -366,7 +371,9 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
         } catch (BasicException ex) {
             Logger.getLogger(ProductsEditor.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+     
+        jTabbedPane1.setSelectedIndex(0);
+        m_jName.setRequestFocusEnabled(true);
     }
     
     public String getID() {

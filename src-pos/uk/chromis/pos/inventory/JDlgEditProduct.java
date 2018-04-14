@@ -129,7 +129,7 @@ public class JDlgEditProduct extends javax.swing.JDialog {
         jPanelEditor = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle(AppLocal.getIntString("caption.upload")); // NOI18N
+        setTitle(AppLocal.getIntString("caption.producteditor")); // NOI18N
         setResizable(false);
 
         jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
