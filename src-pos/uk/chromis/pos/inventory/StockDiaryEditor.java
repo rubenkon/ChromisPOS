@@ -625,11 +625,13 @@ public final class StockDiaryEditor extends javax.swing.JPanel
             if (oProduct == null) {       
                 new PlayWave("error.wav").start(); // playing WAVE file 
                                 
-                if (JOptionPane.showConfirmDialog(this, AppLocal.getIntString( "message.createproduct"),
+                int option = JOptionPane.showConfirmDialog(this, AppLocal.getIntString( "message.createproduct"),
                         AppLocal.getIntString("message.title"),
-                        JOptionPane.YES_NO_OPTION, 
-                        JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
-                    newProduct();
+                        JOptionPane.YES_NO_CANCEL_OPTION, 
+                        JOptionPane.QUESTION_MESSAGE);
+                
+                if ( option != JOptionPane.CANCEL_OPTION ) {
+                    newProduct( option == JOptionPane.YES_OPTION );
                 }
             } else {
                 assignProduct(oProduct);
@@ -674,11 +676,14 @@ public final class StockDiaryEditor extends javax.swing.JPanel
         }
     }
     
-    private void newProduct() {
+    private void newProduct( boolean bScrapeWeb ) {
         if( warnChangesLost() ) {
             createEditor();
             dlgEditProduct.setProduct( null, m_jcodebar.getText() );
             dlgEditProduct.setVisible( true );
+            if( bScrapeWeb ) {
+                dlgEditProduct.scrapeSupplierWeb();
+            }
         }
     }
     

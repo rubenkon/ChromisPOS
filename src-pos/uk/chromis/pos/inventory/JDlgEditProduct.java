@@ -93,7 +93,10 @@ public class JDlgEditProduct extends javax.swing.JDialog {
         jPanelEditor.add( producteditor );
         
     }
-
+    public void scrapeSupplierWeb() {
+        producteditor.scrapeSupplierWeb();
+    }
+        
     public void setProduct( String productID, String barcode ) {
         if( productID == null ) {
             state = STATE_INSERT;

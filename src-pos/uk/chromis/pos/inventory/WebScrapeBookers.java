@@ -84,6 +84,7 @@ public class WebScrapeBookers extends JFrame {
             value = ExtractString( productInfo, "<h3>", "<span ");
             if( !value.isEmpty() ) {
                 infoNew.setName( value );
+                infoNew.setDisplay( "<html>" + value );
             }
             
             value = ExtractString( productInfo, "Case of<br>", "</p>");
@@ -100,7 +101,8 @@ public class WebScrapeBookers extends JFrame {
             value = ExtractString( productInfo, "<li id=\"BPIH_liVAT\">VAT: <span>", "%</span>");
             if( !value.isEmpty() ) {
                 taxRate = Double.parseDouble(value);
-                infoNew.setTaxRate( taxRate );
+                infoNew.setTaxRate( taxRate/100.0 );
+                infoNew.setTaxCategoryID(null);
             }
 
             value = ExtractString( productInfo, "<li id=\"BPIH_liWSP\">WSP: <span>£", "</span>");
