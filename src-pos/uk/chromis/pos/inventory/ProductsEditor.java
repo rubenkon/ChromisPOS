@@ -35,6 +35,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -243,7 +244,17 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
         }
         m_PromotionModel.setSelectedKey( promID );
 
-        taxcatmodel.setSelectedKey( info.getTaxCategoryID());
+        if( info.getTaxCategoryID() == null ) {
+            // Try to figure out tax category from the rate
+            for( int n = 0; n < taxcatmodel.getSize(); ++n ) {
+                Double r = taxeslogic.getTaxRate((TaxCategoryInfo) taxcatmodel.getElementAt(n));
+                if( r.compareTo(info.getTaxRate()) == 0) {
+                    taxcatmodel.setSelectedItem( taxcatmodel.getElementAt(n));
+                }
+            }
+        } else {
+            taxcatmodel.setSelectedKey( info.getTaxCategoryID());
+        }
         attmodel.setSelectedKey( info.getAttributeSetID());
         m_jImage.setImage( info.getImage());
         m_jstockcost.setText(Formats.CURRENCY.formatValue(info.getStockCost()));
@@ -345,7 +356,10 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
 
         Properties props = new Properties();
         try {                                                   
-            props.loadFromXML(new ByteArrayInputStream(txtProperties.getText().getBytes(StandardCharsets.UTF_8)));
+            String xml = txtProperties.getText();
+            if( !xml.isEmpty() ) {
+                props.loadFromXML(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
+            }
             info.setProperties( props );
         } catch (IOException ex) {
             Logger.getLogger(ProductsEditor.class.getName()).log(Level.SEVERE, null, ex);
@@ -1952,7 +1966,7 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
         m_jCode.setText( code );        
     }//GEN-LAST:event_jButton2ActionPerformed
 
-    private void jBtnSupplierWebActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnSupplierWebActionPerformed
+    public void scrapeSupplierWeb() {                                                
         if( webscraper == null ) {
             webscraper = new WebScrapeBookers();
             webscraper.StartScraper( webscraper.getSearchUrl(m_jCode.getText()),
@@ -1967,6 +1981,9 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
 
                         webscraper.saveState();
                         webscraper.setVisible( false ); 
+                    } else if( e.getActionCommand().matches("Cancel") ) {
+                        webscraper.saveState();
+                        webscraper.setVisible( false ); 
                     }
                 }
             });   
@@ -1974,6 +1991,10 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
             webscraper.findCode( m_jCode.getText() );
         }
         webscraper.setVisible( true );
+    }                                               
+
+    private void jBtnSupplierWebActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnSupplierWebActionPerformed
+        scrapeSupplierWeb();
     }//GEN-LAST:event_jBtnSupplierWebActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
