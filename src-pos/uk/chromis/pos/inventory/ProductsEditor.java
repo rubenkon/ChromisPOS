@@ -1903,8 +1903,10 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
     private void jPropertyAddButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jPropertyAddButtonActionPerformed
         Properties props = new Properties();
 
-        try {                                                   
-            props.loadFromXML(new ByteArrayInputStream(txtProperties.getText().getBytes(StandardCharsets.UTF_8)));
+        try {
+            if( !txtProperties.getText().isEmpty() ) {
+                props.loadFromXML(new ByteArrayInputStream(txtProperties.getText().getBytes(StandardCharsets.UTF_8)));
+            }
         } catch (IOException ex) {
             Logger.getLogger(ProductsEditor.class.getName()).log(Level.SEVERE, null, ex);
         }

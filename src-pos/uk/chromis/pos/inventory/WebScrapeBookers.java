@@ -81,7 +81,7 @@ public class WebScrapeBookers extends JFrame {
             Double packSize = 1.0;
             Properties props = infoNew.getProperties();
 
-            value = ExtractString( productInfo, "<h3>", "<span ");
+            value = ExtractString( productInfo, "<h3>", "<");
             if( !value.isEmpty() ) {
                 infoNew.setName( value );
                 infoNew.setDisplay( "<html>" + value );
@@ -140,11 +140,14 @@ public class WebScrapeBookers extends JFrame {
     public void checkEnableOK() {
         boolean bEnable = false;
         
+        String url = WebView.getUrl();
         String html = WebView.getPageSource();
-        if( !html.isEmpty() ) {
-            String str = ExtractString( html, "<h3>", "<span ");
-            if( !str.isEmpty() ) {
-                bEnable = true;
+        if( !url.isEmpty() && !html.isEmpty() ) {
+            if( url.startsWith("https://www.booker.co.uk/catalog/productinformation.aspx" ) ) {
+                String str = ExtractString( html, "<h3>", "<");
+                if( !str.isEmpty() ) {
+                    bEnable = true;
+                }
             }
         }
         WebView.enableOK(bEnable);

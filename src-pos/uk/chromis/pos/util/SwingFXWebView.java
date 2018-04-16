@@ -245,6 +245,10 @@ public class SwingFXWebView extends JPanel {
             }
         });
     }
+    
+    public String getUrl() {
+        return webEngine.getLocation();
+    }
 
     public String getPageSource() {
         return pageSource;
