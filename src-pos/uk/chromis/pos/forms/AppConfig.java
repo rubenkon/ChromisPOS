@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -60,10 +61,23 @@ public class AppConfig implements AppProperties {
         // Now apply any over-rides passed on the command line
         if( args != null ) {
            for(int i=0; i<args.length-1; i++){
-                if( args[i].startsWith("-") && args[i].length() > 2 ) {
-                    String pName = args[i].substring(1);
-                    m_propsconfig.setProperty(pName, args[i+1]);
-                    logger.log(Level.INFO, "Command line over-ride: {0}", pName + "=" + args[i+1]);
+                if( args[i].startsWith("-logfile") && args[i].length() > 2 ) {
+                    try {
+                        Logger.getGlobal().getParent().getHandlers()[0].setLevel(Level.FINER);                        
+                        FileHandler fh = new FileHandler( args[i+1] );
+                        fh.setLevel(Level.FINER);
+                        Logger.getGlobal().getParent().addHandler( fh );
+                      
+                        logger.log(Level.INFO, "File logging enabled to ", args[i+1]);
+                    } catch (IOException | SecurityException ex) {
+                        Logger.getLogger(AppConfig.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                } else {
+                    if( args[i].startsWith("-") && args[i].length() > 2 ) {
+                        String pName = args[i].substring(1);
+                        m_propsconfig.setProperty(pName, args[i+1]);
+                        logger.log(Level.INFO, "Command line over-ride: {0}", pName + "=" + args[i+1]);
+                    }
                 }
             }
         }
