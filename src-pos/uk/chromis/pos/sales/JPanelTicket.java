@@ -2072,7 +2072,7 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
 
     private Object executeEvent(TicketInfo ticket, Object ticketext, String eventkey, ScriptArg... args) {
         String resource = m_jbtnconfig.getEvent(eventkey);
-        Logger.getLogger(JPanelTicket.class.getName()).log(Level.INFO, null, eventkey);
+        Logger.getLogger(JPanelTicket.class.getName()).log(Level.INFO, eventkey, ticketext);
         if (resource == null) {
             return null;
         } else {
