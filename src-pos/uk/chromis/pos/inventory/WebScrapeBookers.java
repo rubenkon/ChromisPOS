@@ -9,7 +9,6 @@ import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.util.Properties;
 import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
 import uk.chromis.data.gui.JImageEditor;
 import uk.chromis.pos.forms.AppLocal;
 import uk.chromis.pos.ticket.ProductInfoExt;
@@ -31,20 +30,13 @@ public class WebScrapeBookers extends JFrame {
 
         cookieFile = System.getProperty("user.home") + '/' + AppLocal.APP_ID + ".cookies";
         
-        // Run this later:
-        SwingUtilities.invokeLater(new Runnable() {  
-            @Override
-            public void run() {  
-                
-                WebView = new SwingFXWebView( startUrl, cookieFile, actionListener );  
-                 
-                getContentPane().add( WebView );  
-                 
-                setMinimumSize(new Dimension(1024, 768));  
-                pack();
-                setVisible(true);  
-            }  
-        });
+        WebView = new SwingFXWebView( startUrl, cookieFile, actionListener );  
+
+        getContentPane().add( WebView );  
+
+        setMinimumSize(new Dimension(1024, 768));  
+        pack();
+        setVisible(true);  
     }
 
     public void saveState() {
@@ -72,6 +64,13 @@ public class WebScrapeBookers extends JFrame {
         return extract;
     }
     
+    private boolean hasValue( String str ) {
+        if( str == null || str.isEmpty() )
+            return false;
+        else
+            return true;
+    }
+    
     public ProductInfoExt decodeCurrentPage( ProductInfoExt infoOld  ) {
         ProductInfoExt infoNew = new ProductInfoExt( infoOld );
         String productInfo = WebView.getPageSource();
@@ -82,47 +81,48 @@ public class WebScrapeBookers extends JFrame {
             Properties props = infoNew.getProperties();
 
             value = ExtractString( productInfo, "<h3>", "<");
-            if( !value.isEmpty() ) {
+            if( hasValue( value ) ) {
                 infoNew.setName( value );
                 infoNew.setDisplay( "<html>" + value );
             }
             
             value = ExtractString( productInfo, "Case of<br>", "</p>");
-            if( !value.isEmpty() ) {
+            if( hasValue( value ) ) {
                 packSize = Double.parseDouble(value);
                 infoNew.setPackQuantity( packSize );
             }
 
             value = ExtractString( productInfo, "li>Code: <span>", "</span>");
-            if( !value.isEmpty() ) {
+            if( hasValue( value ) ) {
                 infoNew.setReference( value );
             }
             
             value = ExtractString( productInfo, "<li id=\"BPIH_liVAT\">VAT: <span>", "%</span>");
-            if( !value.isEmpty() ) {
+            if( hasValue( value ) ) {
                 taxRate = Double.parseDouble(value);
                 infoNew.setTaxRate( taxRate/100.0 );
                 infoNew.setTaxCategoryID(null);
             }
 
             value = ExtractString( productInfo, "<li id=\"BPIH_liWSP\">WSP: <span>£", "</span>");
-            if( !value.isEmpty() ) {
+            if( hasValue( value ) ) {
                 infoNew.setPriceBuy( Double.parseDouble(value) / packSize );
             }
             
             value = ExtractString( productInfo, "<li id=\"BPIH_liRRP\">RRP: <span>£", "</span>");
-            if( !value.isEmpty() ) {
+            if( hasValue( value ) ) {
                 infoNew.setPriceSell( Double.parseDouble(value) / (1+(taxRate/100.0) ) );
             }
+
             value = ExtractString( productInfo, "cies-flashimage\"><img style=\"width:200;\" src=\"", "\" alt=\"" );
-            if( !value.isEmpty() ) {
+            if( hasValue( value ) ) {
                 JImageEditor image = new JImageEditor();
                 image.LoadFromUrl( "https://www.booker.co.uk/" + value );
                 infoNew.setImage( image.getImage() );
             }
             
             value = ExtractString( productInfo, "<li id=\"BPIH_liUnitInfo\">Alcohol Units: <span>", "</span>" );
-            if( !value.isEmpty() ) {
+            if( hasValue( value ) ) {
                 if( Double.parseDouble(value) > 0.0 ) {
                     props.setProperty( "Age_Min", "18.0" );
                     infoNew.setCanDiscount(false);
@@ -138,19 +138,21 @@ public class WebScrapeBookers extends JFrame {
     }
 
     public void checkEnableOK() {
-        boolean bEnable = false;
+        if( WebView != null ){
+            boolean bEnable = false;
         
-        String url = WebView.getUrl();
-        String html = WebView.getPageSource();
-        if( !url.isEmpty() && !html.isEmpty() ) {
-            if( url.startsWith("https://www.booker.co.uk/catalog/productinformation.aspx" ) ) {
-                String str = ExtractString( html, "<h3>", "<");
-                if( !str.isEmpty() ) {
-                    bEnable = true;
+            String url = WebView.getUrl();
+            String html = WebView.getPageSource();
+            if( hasValue( url ) && hasValue( html ) ) {
+                if( url.startsWith("https://www.booker.co.uk/catalog/productinformation.aspx" ) ) {
+                    String str = ExtractString( html, "<h3>", "<");
+                    if( hasValue( str ) ) {
+                        bEnable = true;
+                    }
                 }
             }
+            WebView.enableOK(bEnable);
         }
-        WebView.enableOK(bEnable);
     }
 
     public String getSearchUrl( String code ) {

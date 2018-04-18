@@ -5,8 +5,8 @@
  */
 package uk.chromis.pos.util;
 
-import com.sun.javafx.application.PlatformImpl;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import static java.awt.event.ActionEvent.ACTION_PERFORMED;
 import java.awt.event.ActionListener;
@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -61,6 +62,7 @@ public class SwingFXWebView extends JPanel {
     String pageSource = null;
     
     public SwingFXWebView( String startUrl, String cookies, ActionListener actionListener ){  
+        
         try {
             startUri = new URI(startUrl);
         } catch (URISyntaxException ex) {
@@ -68,6 +70,7 @@ public class SwingFXWebView extends JPanel {
         }
         mActionListener = actionListener;
         cookieFile = cookies;
+
         initComponents();          
     }  
   
@@ -78,6 +81,7 @@ public class SwingFXWebView extends JPanel {
          
         setLayout(new BorderLayout());  
         add(jfxPanel, BorderLayout.CENTER);  
+        jfxPanel.setSize(new Dimension(1024, 768) );
          
         okButton = new JButton();  
         okButton.addActionListener(mActionListener);  
@@ -94,9 +98,10 @@ public class SwingFXWebView extends JPanel {
         cancelButton.setText( bundle.getString("Button.Cancel"));         
         jPanel.add(cancelButton, BorderLayout.WEST );  
  
-        add( jPanel, BorderLayout.SOUTH);  
-        
+        add( jPanel, BorderLayout.SOUTH);   
+ 
         enableOK( false );
+        
     }     
 
     public void enableOK( boolean bEnable ) {
@@ -239,7 +244,7 @@ public class SwingFXWebView extends JPanel {
     }
 
     public void setUrl( String newUrl ) {
-        PlatformImpl.runLater(new Runnable() {
+        Platform.runLater(new Runnable() {
             @Override public void run() {
                    webEngine.load(newUrl);
             }
@@ -264,6 +269,7 @@ public class SwingFXWebView extends JPanel {
         if( pageSource != null ) {
             mActionListener.actionPerformed( new ActionEvent( browser, ACTION_PERFORMED, "PageLoadComplete" ) );
         }
+
     }
     
     /** 
@@ -274,7 +280,8 @@ public class SwingFXWebView extends JPanel {
      * 
      */  
     private void createScene() {  
-        PlatformImpl.startup(new Runnable() {  
+
+        Platform.runLater( new Runnable() {  
             @Override
             public void run() {  
                  
@@ -282,7 +289,7 @@ public class SwingFXWebView extends JPanel {
                  
                 stage.setTitle("ChromisPOS WebView");  
                 stage.setResizable(true);  
-   
+                
                 StackPane root = new StackPane();  
                 Scene scene = new Scene(root,80,20);  
                 stage.setScene(scene);  
@@ -318,8 +325,11 @@ public class SwingFXWebView extends JPanel {
                 ObservableList<Node> children = root.getChildren();
                 children.add(browser);                     
                  
-                jfxPanel.setScene(scene);  
+                jfxPanel.setScene(scene);
+
             }  
-        });  
+        });
+
     }
+
 }    
