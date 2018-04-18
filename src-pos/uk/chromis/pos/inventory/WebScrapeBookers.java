@@ -114,10 +114,10 @@ public class WebScrapeBookers extends JFrame {
                 infoNew.setPriceSell( Double.parseDouble(value) / (1+(taxRate/100.0) ) );
             }
 
-            value = ExtractString( productInfo, "cies-flashimage\"><img style=\"width:200;\" src=\"", "\" alt=\"" );
+            value = ExtractString( productInfo, "src=\"/bbimages/", "\" alt=\"" );
             if( hasValue( value ) ) {
                 JImageEditor image = new JImageEditor();
-                image.LoadFromUrl( "https://www.booker.co.uk/" + value );
+                image.LoadFromUrl( "https://www.booker.co.uk/bbimages/" + value );
                 infoNew.setImage( image.getImage() );
             }
             
