@@ -482,7 +482,7 @@ public class JRootApp extends JPanel implements AppView {
                 FileUtils.copyDirectory(dbReportsSource, new File(currentPath + "/reports/uk/chromis/reports"));
             }
         } catch (IOException ex) {
-            Logger.getLogger(JRootApp.class.getName()).log(Level.SEVERE, null, ex);
+//            Logger.getLogger(JRootApp.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         showLogin();
