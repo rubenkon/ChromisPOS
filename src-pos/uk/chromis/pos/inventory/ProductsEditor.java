@@ -227,73 +227,80 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
         
         if( info == null ) return;
         
-        m_jRef.setText( info.getReference());
-        m_jCode.setText( info.getCode());
-        m_jName.setText( info.getName() );
-        m_jComment.setSelected( info.isCom() );
-        m_jScale.setSelected( info.isScale() );
-        m_jPriceBuy.setText(Formats.CURRENCY.formatValue(info.getPriceBuy()));
-        m_CategoryModel.setSelectedKey(info.getCategoryID());
-        jComboBoxPromotion.setEnabled(true);
+        try {
+            activate();
+        
+            m_jRef.setText( info.getReference());
+            m_jCode.setText( info.getCode());
+            m_jName.setText( info.getName() );
+            m_jComment.setSelected( info.isCom() );
+            m_jScale.setSelected( info.isScale() );
+            m_jPriceBuy.setText(Formats.CURRENCY.formatValue(info.getPriceBuy()));
+            m_CategoryModel.setSelectedKey(info.getCategoryID());
+            jComboBoxPromotion.setEnabled(true);
 
-        String promID =  info.getPromotionID();
-        if ( promID != null && !promID.isEmpty() ) {
-            jCheckBoxPromotion.setSelected(true);
-        } else {
-            jCheckBoxPromotion.setSelected(false);
-        }
-        m_PromotionModel.setSelectedKey( promID );
-
-        if( info.getTaxCategoryID() == null ) {
-            // Try to figure out tax category from the rate
-            for( int n = 0; n < taxcatmodel.getSize(); ++n ) {
-                Double r = taxeslogic.getTaxRate((TaxCategoryInfo) taxcatmodel.getElementAt(n));
-                if( r.compareTo(info.getTaxRate()) == 0) {
-                    taxcatmodel.setSelectedItem( taxcatmodel.getElementAt(n));
-                }
+            String promID =  info.getPromotionID();
+            if ( promID != null && !promID.isEmpty() ) {
+                jCheckBoxPromotion.setSelected(true);
+            } else {
+                jCheckBoxPromotion.setSelected(false);
             }
-        } else {
-            taxcatmodel.setSelectedKey( info.getTaxCategoryID());
+            m_PromotionModel.setSelectedKey( promID );
+
+            if( info.getTaxCategoryID() == null ) {
+                // Try to figure out tax category from the rate
+                for( int n = 0; n < taxcatmodel.getSize(); ++n ) {
+                    Double r = taxeslogic.getTaxRate((TaxCategoryInfo) taxcatmodel.getElementAt(n));
+                    if( r.compareTo(info.getTaxRate()) == 0) {
+                        taxcatmodel.setSelectedItem( taxcatmodel.getElementAt(n));
+                    }
+                }
+            } else {
+                taxcatmodel.setSelectedKey( info.getTaxCategoryID());
+            }
+            attmodel.setSelectedKey( info.getAttributeSetID());
+            m_jImage.setImage( info.getImage());
+            m_jstockcost.setText(Formats.CURRENCY.formatValue(info.getStockCost()));
+            m_jstockvolume.setText(Formats.DOUBLE.formatValue(info.getStockVolume()));
+            m_jInCatalog.setSelected( info.getInCatalog());
+            m_jRetired.setSelected( info.getRetired());
+            m_jCatalogOrder.setText(Formats.INT.formatValue(info.getCatOrder()));
+            m_jKitchen.setSelected( info.isKitchen());
+            m_jService.setSelected( info.isService());
+            m_jDisplay.setText( info.getDisplay());
+            setButtonHTML();
+            m_jVprice.setSelected( info.isVprice());
+            m_jVerpatrib.setSelected( info.isVerpatrib());
+            m_jTextTip.setText( info.getTextTip());
+            m_jCheckWarrantyReceipt.setSelected( info.getWarranty());
+            m_jStockUnits.setText(Formats.DOUBLE.formatValue(info.getStockUnits()));
+            m_jAlias.setText( info.getAlias());
+            m_jAlwaysAvailable.setSelected( info.getAlwaysAvailable());
+            m_jDiscounted.setSelected( info.getCanDiscount());
+            m_jManageStock.setSelected( info.getManageStock() );
+            m_jIsPack.setSelected( info.getIsPack());
+            m_jPackQuantity.setText(Formats.DOUBLE.formatValue(info.getPackQuantity()));
+            packproductmodel.setSelectedKey( info.getPromotionID());
+
+            String displayname = "<html>" + m_jName.getText();
+            originalDisplay = m_jDisplay.getText();
+            displayEdited = displayname.compareToIgnoreCase(originalDisplay) != 0;
+
+            txtProperties.setText( info.getPropertiesXml() );
+
+            if( m_jName.getText().isEmpty() ) {
+                m_jTitle.setText(AppLocal.getIntString("label.recordnew"));
+            } else {
+                m_jTitle.setText( m_jName.getText() );
+            }    
+            setPriceSell(info.getPriceSell());
+            calculateMargin();
+            calculatePriceSellTax();
+            calculateGP();
+            
+        } catch (BasicException ex) {
+            Logger.getLogger(ProductsEditor.class.getName()).log(Level.SEVERE, null, ex);
         }
-        attmodel.setSelectedKey( info.getAttributeSetID());
-        m_jImage.setImage( info.getImage());
-        m_jstockcost.setText(Formats.CURRENCY.formatValue(info.getStockCost()));
-        m_jstockvolume.setText(Formats.DOUBLE.formatValue(info.getStockVolume()));
-        m_jInCatalog.setSelected( info.getInCatalog());
-        m_jRetired.setSelected( info.getRetired());
-        m_jCatalogOrder.setText(Formats.INT.formatValue(info.getCatOrder()));
-        m_jKitchen.setSelected( info.isKitchen());
-        m_jService.setSelected( info.isService());
-        m_jDisplay.setText( info.getDisplay());
-        setButtonHTML();
-        m_jVprice.setSelected( info.isVprice());
-        m_jVerpatrib.setSelected( info.isVerpatrib());
-        m_jTextTip.setText( info.getTextTip());
-        m_jCheckWarrantyReceipt.setSelected( info.getWarranty());
-        m_jStockUnits.setText(Formats.DOUBLE.formatValue(info.getStockUnits()));
-        m_jAlias.setText( info.getAlias());
-        m_jAlwaysAvailable.setSelected( info.getAlwaysAvailable());
-        m_jDiscounted.setSelected( info.getCanDiscount());
-        m_jManageStock.setSelected( info.getManageStock() );
-        m_jIsPack.setSelected( info.getIsPack());
-        m_jPackQuantity.setText(Formats.DOUBLE.formatValue(info.getPackQuantity()));
-        packproductmodel.setSelectedKey( info.getPromotionID());
-
-        String displayname = "<html>" + m_jName.getText();
-        originalDisplay = m_jDisplay.getText();
-        displayEdited = displayname.compareToIgnoreCase(originalDisplay) != 0;
-
-        txtProperties.setText( info.getPropertiesXml() );
-
-        if( m_jName.getText().isEmpty() ) {
-            m_jTitle.setText(AppLocal.getIntString("label.recordnew"));
-        } else {
-            m_jTitle.setText( m_jName.getText() );
-        }    
-        setPriceSell(info.getPriceSell());
-        calculateMargin();
-        calculatePriceSellTax();
-        calculateGP();
     }
 
     // Set the product to be edited.  
