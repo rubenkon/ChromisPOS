@@ -69,7 +69,7 @@ public class JDlgEditProduct extends javax.swing.JDialog {
         m_CallBacks = callBacks;
     }
     
-    public void init( DataLogicSales dlSales, DataLogicSystem dlSystem, DirtyManager dirty, String productID, String barcode ) {
+    public void init( DataLogicSales dlSales, DataLogicSystem dlSystem, DirtyManager dirty ) {
         m_dlSales = dlSales;
         m_dlSystem = dlSystem;
         m_dirty = dirty;
@@ -87,18 +87,24 @@ public class JDlgEditProduct extends javax.swing.JDialog {
         try {
             producteditor.activate();
             
-            if( productID == null ) {
-                state = STATE_INSERT;
-            } else {
-                state = STATE_UPDATE;                
-            }
-
-            producteditor.setProduct( productID, barcode );
         } catch (BasicException ex) {
             Logger.getLogger(JDlgEditProduct.class.getName()).log(Level.SEVERE, null, ex);
         }
         jPanelEditor.add( producteditor );
         
+    }
+    public void scrapeSupplierWeb() {
+        producteditor.scrapeSupplierWeb();
+    }
+        
+    public void setProduct( String productID, String barcode ) {
+        if( productID == null ) {
+            state = STATE_INSERT;
+        } else {
+            state = STATE_UPDATE;                
+        }
+
+        producteditor.setProduct( productID, barcode );
     }
     
     private static Window getWindow(Component parent) {
@@ -126,7 +132,7 @@ public class JDlgEditProduct extends javax.swing.JDialog {
         jPanelEditor = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle(AppLocal.getIntString("caption.upload")); // NOI18N
+        setTitle(AppLocal.getIntString("caption.producteditor")); // NOI18N
         setResizable(false);
 
         jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));

@@ -22,6 +22,7 @@ package uk.chromis.pos.inventory;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
+import static java.awt.event.ActionEvent.ACTION_PERFORMED;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -34,6 +35,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -86,6 +88,7 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
     private Boolean displayEdited = false;
     private String originalDisplay;
     private Properties m_PropertyOptions;
+    private WebScrapeBookers webscraper = null;
     
     /**
      * Creates new form JEditProduct
@@ -187,7 +190,7 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
         m_jPriceSellTax.getDocument().addDocumentListener(new PriceTaxManager());
         m_jTax.addActionListener(new PriceTaxManager());
         m_jmargin.getDocument().addDocumentListener(new MarginManager());
-        
+
         writeValueEOF();
     }
 
@@ -219,71 +222,168 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
 
         AutoCompleteComboBox.enable(m_jPackProduct);
     }
-
 // Set the product to be edited.  
+    private void setProductInfo( ProductInfoExt info ) {
+        
+        if( info == null ) return;
+        
+        try {
+            activate();
+        
+            m_jRef.setText( info.getReference());
+            m_jCode.setText( info.getCode());
+            m_jName.setText( info.getName() );
+            m_jComment.setSelected( info.isCom() );
+            m_jScale.setSelected( info.isScale() );
+            m_jPriceBuy.setText(Formats.CURRENCY.formatValue(info.getPriceBuy()));
+            m_CategoryModel.setSelectedKey(info.getCategoryID());
+            jComboBoxPromotion.setEnabled(true);
+
+            String promID =  info.getPromotionID();
+            if ( promID != null && !promID.isEmpty() ) {
+                jCheckBoxPromotion.setSelected(true);
+            } else {
+                jCheckBoxPromotion.setSelected(false);
+            }
+            m_PromotionModel.setSelectedKey( promID );
+
+            if( info.getTaxCategoryID() == null ) {
+                // Try to figure out tax category from the rate
+                for( int n = 0; n < taxcatmodel.getSize(); ++n ) {
+                    Double r = taxeslogic.getTaxRate((TaxCategoryInfo) taxcatmodel.getElementAt(n));
+                    if( r.compareTo(info.getTaxRate()) == 0) {
+                        taxcatmodel.setSelectedItem( taxcatmodel.getElementAt(n));
+                    }
+                }
+            } else {
+                taxcatmodel.setSelectedKey( info.getTaxCategoryID());
+            }
+            attmodel.setSelectedKey( info.getAttributeSetID());
+            m_jImage.setImage( info.getImage());
+            m_jstockcost.setText(Formats.CURRENCY.formatValue(info.getStockCost()));
+            m_jstockvolume.setText(Formats.DOUBLE.formatValue(info.getStockVolume()));
+            m_jInCatalog.setSelected( info.getInCatalog());
+            m_jRetired.setSelected( info.getRetired());
+            m_jCatalogOrder.setText(Formats.INT.formatValue(info.getCatOrder()));
+            m_jKitchen.setSelected( info.isKitchen());
+            m_jService.setSelected( info.isService());
+            m_jDisplay.setText( info.getDisplay());
+            setButtonHTML();
+            m_jVprice.setSelected( info.isVprice());
+            m_jVerpatrib.setSelected( info.isVerpatrib());
+            m_jTextTip.setText( info.getTextTip());
+            m_jCheckWarrantyReceipt.setSelected( info.getWarranty());
+            m_jStockUnits.setText(Formats.DOUBLE.formatValue(info.getStockUnits()));
+            m_jAlias.setText( info.getAlias());
+            m_jAlwaysAvailable.setSelected( info.getAlwaysAvailable());
+            m_jDiscounted.setSelected( info.getCanDiscount());
+            m_jManageStock.setSelected( info.getManageStock() );
+            m_jIsPack.setSelected( info.getIsPack());
+            m_jPackQuantity.setText(Formats.DOUBLE.formatValue(info.getPackQuantity()));
+            packproductmodel.setSelectedKey( info.getPromotionID());
+
+            String displayname = "<html>" + m_jName.getText();
+            originalDisplay = m_jDisplay.getText();
+            displayEdited = displayname.compareToIgnoreCase(originalDisplay) != 0;
+
+            txtProperties.setText( info.getPropertiesXml() );
+
+            if( m_jName.getText().isEmpty() ) {
+                m_jTitle.setText(AppLocal.getIntString("label.recordnew"));
+            } else {
+                m_jTitle.setText( m_jName.getText() );
+            }    
+            setPriceSell(info.getPriceSell());
+            calculateMargin();
+            calculatePriceSellTax();
+            calculateGP();
+            
+        } catch (BasicException ex) {
+            Logger.getLogger(ProductsEditor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    // Set the product to be edited.  
+    private ProductInfoExt getProductInfo( ) {
+        
+        ProductInfoExt info = new ProductInfoExt();
+        info.setReference( m_jRef.getText() );
+        info.setCode(m_jCode.getText() );
+        info.setName(m_jName.getText() );
+        info.setCom(m_jComment.isSelected());
+        info.setScale(m_jScale.isSelected());
+        info.setPriceBuy( readCurrency(m_jPriceBuy.getText()));
+        info.setPriceSell( readCurrency(m_jPriceSell.getText()));
+        
+        info.setCategoryID((String) m_CategoryModel.getSelectedKey());
+        info.setPromotionID((String) m_PromotionModel.getSelectedKey());
+        info.setTaxCategoryID((String) taxcatmodel.getSelectedKey());
+        info.setAttributeSetID((String) attmodel.getSelectedKey());
+
+        info.setImage( m_jImage.getImage());
+
+        info.setStockCost( readCurrency( m_jstockcost.getText()));
+        info.setStockVolume( readCurrency( m_jstockvolume.getText()));
+
+        info.setInCatalog( m_jInCatalog.isSelected());
+        info.setRetired( m_jRetired.isSelected());
+
+        String val = m_jCatalogOrder.getText();
+        if( !val.isEmpty() )
+            info.setCatOrder( Double.parseDouble( val ) );
+
+        info.setKitchen( m_jKitchen.isSelected());
+        info.setService( m_jService.isSelected());
+        
+        info.setReference( m_jRef.getText() );
+
+        info.setVprice( m_jVprice.isSelected());
+        info.setVerpatrib( m_jVerpatrib.isSelected());
+        
+        info.setTextTip( m_jTextTip.getText() );
+        info.setWarranty( m_jCheckWarrantyReceipt.isSelected());
+
+        val = m_jStockUnits.getText();
+        if( !val.isEmpty() )
+            info.setStockUnits( Double.parseDouble( val ) );
+
+        info.setAlias( m_jAlias.getText() );
+        info.setAlwaysAvailable( m_jAlwaysAvailable.isSelected());
+        info.setCanDiscount( m_jDiscounted.isSelected());
+        info.setManageStock( m_jManageStock.isSelected());
+        info.setIsPack( m_jIsPack.isSelected());
+        
+        val = m_jPackQuantity.getText();
+        if( !val.isEmpty() )
+            info.setPackQuantity( Double.parseDouble( val ) );
+        
+        info.setPackProduct((String) packproductmodel.getSelectedKey());
+
+        info.setDisplay( m_jDisplay.getText() );
+
+        Properties props = new Properties();
+        try {                                                   
+            String xml = txtProperties.getText();
+            if( !xml.isEmpty() ) {
+                props.loadFromXML(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
+            }
+            info.setProperties( props );
+        } catch (IOException ex) {
+            Logger.getLogger(ProductsEditor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return info;
+    }
+
+    // Set the product to be edited.  
     public void setProduct( String productID, String barcode ) {
         try {
             writeValueInsert();
 
             if( productID != null ) {
-                ProductInfoExt info = m_dlSales.getProductInfo( productID );
-
-                Object[] myprod = new Object[DataLogicSales.FIELD_COUNT];
-
+                setProductInfo( m_dlSales.getProductInfo( productID ) );
                 m_id = productID;
-                m_jRef.setText( info.getReference());
-                m_jCode.setText( info.getCode());
-                m_jName.setText( info.getName() );
-                m_jComment.setSelected( info.isCom() );
-                m_jScale.setSelected( info.isScale() );
-                m_jPriceBuy.setText(Formats.CURRENCY.formatValue(info.getPriceBuy()));
-                m_CategoryModel.setSelectedKey(info.getCategoryID());
-                jComboBoxPromotion.setEnabled(true);
-                
-                String promID =  info.getPromotionID();
-                if ( promID != null && !promID.isEmpty() ) {
-                    jCheckBoxPromotion.setSelected(true);
-                } else {
-                    jCheckBoxPromotion.setSelected(false);
-                }
-                m_PromotionModel.setSelectedKey( promID );
-                
-                taxcatmodel.setSelectedKey( info.getTaxCategoryID());
-                attmodel.setSelectedKey( info.getAttributeSetID());
-                m_jImage.setImage( info.getImage());
-                m_jstockcost.setText(Formats.CURRENCY.formatValue(info.getStockCost()));
-                m_jstockvolume.setText(Formats.DOUBLE.formatValue(info.getStockVolume()));
-                m_jInCatalog.setSelected( info.getInCatalog());
-                m_jRetired.setSelected( info.getRetired());
-                m_jCatalogOrder.setText(Formats.INT.formatValue(info.getCatOrder()));
-                m_jKitchen.setSelected( info.isKitchen());
-                m_jService.setSelected( info.isService());
-                m_jDisplay.setText( info.getDisplay());
-                m_jVprice.setSelected( info.isVprice());
-                m_jVerpatrib.setSelected( info.isVerpatrib());
-                m_jTextTip.setText( info.getTextTip());
-                m_jCheckWarrantyReceipt.setSelected( info.getWarranty());
-                m_jStockUnits.setText(Formats.DOUBLE.formatValue(info.getStockUnits()));
-                m_jAlias.setText( info.getAlias());
-                m_jAlwaysAvailable.setSelected( info.getAlwaysAvailable());
-                m_jDiscounted.setSelected( info.getCanDiscount());
-                m_jManageStock.setSelected( info.getManageStock() );
-                m_jIsPack.setSelected( info.getIsPack());
-                m_jPackQuantity.setText(Formats.DOUBLE.formatValue(info.getPackQuantity()));
-                packproductmodel.setSelectedKey( info.getPromotionID());
-                
-                String displayname = "<html>" + m_jName.getText();
-                originalDisplay = m_jDisplay.getText();
-                displayEdited = displayname.compareToIgnoreCase(originalDisplay) != 0;
-                
-                txtProperties.setText( info.getPropertiesXml() );
-                
-                setPriceSell(info.getPriceSell());
-                calculateMargin();
-                calculatePriceSellTax();
-                calculateGP();
-                } else {
-
+            } else {
                 if( barcode != null ) {
                     m_jRef.setText( barcode );
                     m_jCode.setText(barcode);
@@ -292,7 +392,9 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
         } catch (BasicException ex) {
             Logger.getLogger(ProductsEditor.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+     
+        jTabbedPane1.setSelectedIndex(0);
+        m_jName.setRequestFocusEnabled(true);
     }
     
     public String getID() {
@@ -1175,6 +1277,8 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
         jPropertyValueCombo = new javax.swing.JComboBox<>();
         jPropertyValueText = new javax.swing.JTextField();
         jPropertyAddButton = new javax.swing.JButton();
+        jPanel6 = new javax.swing.JPanel();
+        jBtnSupplierWeb = new javax.swing.JButton();
 
         jLabel24.setText("jLabel24");
 
@@ -1184,7 +1288,7 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
 
         m_jTitle.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         m_jTitle.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        add(m_jTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 0, 330, 30));
+        add(m_jTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 0, 210, 30));
 
         jTabbedPane1.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
 
@@ -1649,7 +1753,7 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
         jPanel7.setLayout(null);
 
         jPanel7.add(jPropertyValueCombo);
-        jPropertyValueCombo.setBounds(0, 0, 250, 20);
+        jPropertyValueCombo.setBounds(0, 0, 250, 24);
 
         jPropertyValueText.setText("jTextField1");
         jPanel7.add(jPropertyValueText);
@@ -1690,6 +1794,32 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
         jPanel3.add(jPanelProperties, java.awt.BorderLayout.PAGE_START);
 
         jTabbedPane1.addTab(AppLocal.getIntString("label.properties"), jPanel3); // NOI18N
+
+        jBtnSupplierWeb.setText(bundle.getString("Button.Browser")); // NOI18N
+        jBtnSupplierWeb.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnSupplierWebActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jBtnSupplierWeb)
+                .addContainerGap(490, Short.MAX_VALUE))
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jBtnSupplierWeb)
+                .addContainerGap(356, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("Supplier", jPanel6);
 
         add(jTabbedPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 600, 420));
     }// </editor-fold>//GEN-END:initComponents
@@ -1780,8 +1910,10 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
     private void jPropertyAddButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jPropertyAddButtonActionPerformed
         Properties props = new Properties();
 
-        try {                                                   
-            props.loadFromXML(new ByteArrayInputStream(txtProperties.getText().getBytes(StandardCharsets.UTF_8)));
+        try {
+            if( !txtProperties.getText().isEmpty() ) {
+                props.loadFromXML(new ByteArrayInputStream(txtProperties.getText().getBytes(StandardCharsets.UTF_8)));
+            }
         } catch (IOException ex) {
             Logger.getLogger(ProductsEditor.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -1843,7 +1975,39 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
         m_jCode.setText( code );        
     }//GEN-LAST:event_jButton2ActionPerformed
 
+    public void scrapeSupplierWeb() {                                                
+        if( webscraper == null ) {
+            webscraper = new WebScrapeBookers();
+            webscraper.StartScraper( webscraper.getSearchUrl(m_jCode.getText()),
+                    new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if( e.getActionCommand().matches("PageLoadComplete") ) {
+                        webscraper.checkEnableOK();
+                    } else if( e.getActionCommand().matches("OK") ) {
+                        // User has pressed snapshot button
+                        setProductInfo( webscraper.decodeCurrentPage( getProductInfo() ) );
+
+                        webscraper.saveState();
+                        webscraper.setVisible( false ); 
+                    } else if( e.getActionCommand().matches("Cancel") ) {
+                        webscraper.saveState();
+                        webscraper.setVisible( false ); 
+                    }
+                }
+            });   
+        } else {
+            webscraper.findCode( m_jCode.getText() );
+        }
+        webscraper.setVisible( true );
+    }                                               
+
+    private void jBtnSupplierWebActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnSupplierWebActionPerformed
+        scrapeSupplierWeb();
+    }//GEN-LAST:event_jBtnSupplierWebActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jBtnSupplierWeb;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButtonHTML;
     private eu.hansolo.custom.SteelCheckBox jCheckBoxPromotion;
@@ -1884,6 +2048,7 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanelProperties;
     private javax.swing.JButton jPropertyAddButton;

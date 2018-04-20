@@ -85,7 +85,7 @@ public final class StockDiaryEditor extends javax.swing.JPanel
     private final AppView m_App;
     private final DataLogicSales m_dlSales;
     private final DataLogicSystem m_dlSystem;
-    
+    private JDlgEditProduct dlgEditProduct = null;
     private DirtyManager m_Dirty;
     
     /** Creates new form StockDiaryEditor
@@ -625,11 +625,13 @@ public final class StockDiaryEditor extends javax.swing.JPanel
             if (oProduct == null) {       
                 new PlayWave("error.wav").start(); // playing WAVE file 
                                 
-                if (JOptionPane.showConfirmDialog(this, AppLocal.getIntString( "message.createproduct"),
+                int option = JOptionPane.showConfirmDialog(this, AppLocal.getIntString( "message.createproduct"),
                         AppLocal.getIntString("message.title"),
-                        JOptionPane.YES_NO_OPTION, 
-                        JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
-                    newProduct();
+                        JOptionPane.YES_NO_CANCEL_OPTION, 
+                        JOptionPane.QUESTION_MESSAGE);
+                
+                if ( option != JOptionPane.CANCEL_OPTION ) {
+                    newProduct( option == JOptionPane.YES_OPTION );
                 }
             } else {
                 assignProduct(oProduct);
@@ -657,28 +659,31 @@ public final class StockDiaryEditor extends javax.swing.JPanel
         }
     }
 
-    
-    private void editProduct() {
-        if( warnChangesLost() ) {
+    private void createEditor() {
+        if( dlgEditProduct == null ) {
             JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
-            JDlgEditProduct dlg = new JDlgEditProduct( topFrame, true );
-            dlg.init( m_dlSales, m_dlSystem, m_Dirty, productid, null );
-            dlg.setCallbacks(this);
-            dlg.setVisible( true );
+            dlgEditProduct = new JDlgEditProduct( topFrame, false );
+            dlgEditProduct.init( m_dlSales, m_dlSystem, m_Dirty );
+            dlgEditProduct.setCallbacks(this);
         }
     }
-      
-    private void newProduct() {
+
+    private void editProduct() {
         if( warnChangesLost() ) {
-
-            JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
-            JDlgEditProduct dlg = new JDlgEditProduct( topFrame, true );
-
-            String code = m_jcodebar.getText();
-
-            dlg.init( m_dlSales, m_dlSystem, m_Dirty, null, code );
-            dlg.setCallbacks(this);
-            dlg.setVisible( true );
+            createEditor();
+            dlgEditProduct.setProduct( productid, null );
+            dlgEditProduct.setVisible( true );
+        }
+    }
+    
+    private void newProduct( boolean bScrapeWeb ) {
+        if( warnChangesLost() ) {
+            createEditor();
+            dlgEditProduct.setProduct( null, m_jcodebar.getText() );
+            dlgEditProduct.setVisible( true );
+            if( bScrapeWeb ) {
+                dlgEditProduct.scrapeSupplierWeb();
+            }
         }
     }
     
