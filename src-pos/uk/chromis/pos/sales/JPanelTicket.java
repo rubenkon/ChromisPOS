@@ -1612,11 +1612,11 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                     TicketLineInfo newline = new TicketLineInfo(m_oTicket.getLine(i));
                     if (m_oTicket.getTicketType().equals(TicketType.REFUND)) {
                         newline.setMultiply(-dPor);
-                        newline.setPrice(Math.abs(newline.getPrice()));
+                        newline.setPrice(newline.getPrice());
                         paintTicketLine(i, newline);
                     } else {
                         newline.setMultiply(dPor);
-                        newline.setPrice(Math.abs(newline.getPrice()));
+                        newline.setPrice(newline.getPrice());
                         paintTicketLine(i, newline);
                     }
                 }
@@ -1635,7 +1635,7 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                     TicketLineInfo newline = new TicketLineInfo(m_oTicket.getLine(i));
                     if (m_oTicket.getTicketType().equals(TicketType.NORMAL) || m_oTicket.getTicketType().equals(TicketType.NORMAL)) {
                         newline.setMultiply(dPor);
-                        newline.setPrice(-Math.abs(newline.getPrice()));
+                        newline.setPrice(-newline.getPrice());
                         paintTicketLine(i, newline);
                     }
                 }
