@@ -17,6 +17,7 @@
 	<field name="NAME" class="java.lang.String"/>
 	<field name="PRICESELL" class="java.lang.Double"/>
 	<field name="TAXCAT" class="java.lang.String"/>
+	<field name="PROMOTION" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -43,6 +44,13 @@
     )
 )]]></imageExpression>
 			</image>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="60" width="180" height="15" />
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="SansSerif" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PROMOTION}]]></textFieldExpression>
+			</textField>
 			<textField>
 				<reportElement x="40" y="60" width="210" height="30" />
 				<textElement textAlignment="Center" verticalAlignment="Top">
