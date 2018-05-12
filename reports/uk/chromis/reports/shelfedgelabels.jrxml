@@ -45,7 +45,7 @@
 )]]></imageExpression>
 			</image>
 			<textField isBlankWhenNull="true">
-				<reportElement x="0" y="60" width="180" height="15" />
+				<reportElement x="0" y="60" width="180" height="15" forecolor="#FF0033" backcolor="#FFFFFF" />
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
 					<font fontName="SansSerif" size="10" isBold="false"/>
 				</textElement>
