@@ -5,7 +5,7 @@
 //    This file is part of Chromis POS
 //
 //     Chromis POS is free software: you can redistribute it and/or modify
-//    it under the terms of the GNU General Public License as published by
+//    it under barcodethe terms of the GNU General Public License as published by
 //    the Free Software Foundation, either version 3 of the License, or
 //    (at your option) any later version.
 //
@@ -643,6 +643,12 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
     }
     
     private void addTicketLine(ProductInfoExt oProduct, double dMul, double dPrice) {
+        
+        if( oProduct.getIsPack()) {
+            // Pack product so need to multiply the quantity by the pack size
+            dMul = dMul * oProduct.getPackQuantity();
+        }
+        
         if (oProduct.isVprice()) {
             TaxInfo tax = taxeslogic.getTaxInfo(oProduct.getTaxCategoryID(), m_oTicket.getCustomer());
             if (m_jaddtax.isSelected()) {

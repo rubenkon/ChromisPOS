@@ -330,11 +330,38 @@ public class DataLogicSales extends BeanFactoryDataSingle {
      */
     public final ProductInfoExt getProductInfoByCode(String sCode) throws BasicException {
 
-        return (ProductInfoExt) new PreparedSentence(s, "SELECT "
+        ProductInfoExt pInfo = (ProductInfoExt) new PreparedSentence(s, "SELECT "
                 + getSelectFieldList()
                 + "FROM STOCKCURRENT C RIGHT JOIN PRODUCTS P ON (C.PRODUCT = P.ID) "
                 + "LEFT JOIN TAXES T ON P.TAXCAT = T.CATEGORY "
                 + " WHERE P.CODE = ? ", SerializerWriteString.INSTANCE, ProductInfoExt.getSerializerRead()).find(sCode);
+        
+        if( pInfo == null ) {
+            // Try using the PRODUCTCODES table where additional barcodes for a product are stored.
+            BarcodeInfo bInfo = (BarcodeInfo) new PreparedSentence(s, "SELECT "
+                    + "BARCODE, PRODUCT, PACKTYPE, QUANTITY "
+                    + "FROM PRODUCTCODES PC "
+                    + " WHERE PC.BARCODE = ? ", SerializerWriteString.INSTANCE, BarcodeInfo.getSerializerRead()).find(sCode);
+            if( bInfo != null ) {
+                //Have an alternate barcode - find the original product
+            
+                pInfo = (ProductInfoExt) new PreparedSentence(s, "SELECT "
+                    + getSelectFieldList()
+                    + "FROM STOCKCURRENT C RIGHT JOIN PRODUCTS P ON (C.PRODUCT = P.ID) "
+                    + "LEFT JOIN TAXES T ON P.TAXCAT = T.CATEGORY "
+                    + " WHERE P.ID = ? ", SerializerWriteString.INSTANCE, ProductInfoExt.getSerializerRead()).find(bInfo.getProduct());
+                
+                if( pInfo != null ) {
+                    // We have the original product - Add the quantity etc to the product info
+                    pInfo.setIsPack(true);
+                    pInfo.setPackQuantity( bInfo.getQuantity());
+                    pInfo.setPackProduct(pInfo.getCode() );
+                    pInfo.setCode( bInfo.getCode());
+                }
+            }            
+        }
+        
+        return pInfo;
     }
 
     /**
@@ -763,6 +790,44 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                         dr.getBoolean(6));
             }
         });
+    }
+
+    /**
+     *
+     * @return
+     */
+    public final SentenceList getBarcodesList( String Product ) {
+        return new StaticSentence(s, "SELECT "
+                + "BARCODE, PRODUCT, PACKTYPE, QUANTITY "
+                + "FROM PRODUCTCODES WHERE PRODUCT = '" + Product + "'", null,
+                new SerializerRead() {
+            @Override
+            public Object readValues(DataRead dr) throws BasicException {
+                return new BarcodeInfo(dr.getString(1), dr.getString(2),
+                        dr.getString(3), dr.getDouble(4));
+            }
+        });
+    }
+
+    /**
+     *
+     * @return
+     */
+    public void addProductCode( BarcodeInfo info ) throws BasicException {
+        new PreparedSentence(s, "INSERT INTO PRODUCTCODES (BARCODE, PRODUCT, PACKTYPE, QUANTITY) VALUES ('"
+                + info.getCode() + "','" + info.getProduct()
+                + "','" + info.getPackType()
+                + "','" + info.getQuantity()
+                + "')", null ).exec();
+    }
+
+    /**
+     *
+     * @return
+     */
+    public void removeProductCode( String Barcode ) throws BasicException {
+        new PreparedSentence(s, "DELETE FROM PRODUCTCODES WHERE BARCODE ='"
+                + Barcode + "'", null ).exec();
     }
 
     /**

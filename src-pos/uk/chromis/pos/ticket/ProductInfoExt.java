@@ -76,7 +76,7 @@ public class ProductInfoExt {
     protected Double m_packquantity;
     protected String m_packproduct;
     protected Double m_rate;
-
+    
     public ProductInfoExt() {
         m_ID = null;
         m_sRef = "0000";
