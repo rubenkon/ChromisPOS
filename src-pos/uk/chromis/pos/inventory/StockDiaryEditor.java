@@ -41,6 +41,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Date;
 import java.util.UUID;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -628,19 +629,41 @@ public final class StockDiaryEditor extends javax.swing.JPanel
                 oProduct = m_dlSales.getProductInfoByCode( code );
             }
 
-            if (oProduct == null) {       
+            if (oProduct != null) {
+                assignProduct(oProduct);
+            } else {
+
                 new PlayWave("error.wav").start(); // playing WAVE file 
                                 
-                int option = JOptionPane.showConfirmDialog(this, AppLocal.getIntString( "message.createproduct"),
-                        AppLocal.getIntString("message.title"),
-                        JOptionPane.YES_NO_CANCEL_OPTION, 
-                        JOptionPane.QUESTION_MESSAGE);
-                
-                if ( option != JOptionPane.CANCEL_OPTION ) {
-                    newProduct( option == JOptionPane.YES_OPTION );
+                JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+                JDialog dialog = new JDialog(topFrame, "Unknown Barcode", true);
+
+                NewProductForm newProduct = new NewProductForm();
+                dialog.getContentPane().add(newProduct);
+                dialog.pack();
+                dialog.setLocationRelativeTo(null);
+                dialog.setVisible(true);
+
+                switch ( newProduct.getResult() ) {
+                    case NewProductForm.OPT_CREATE: 
+                        newProduct( false );
+                        break;
+                    case NewProductForm.OPT_SUPPLIER: 
+                        newProduct( true );
+                        break;
+                    case NewProductForm.OPT_ADDBARCODE: 
+                        // need to select a product to add this barcode to
+                        ProductInfoExt prod = JProductFinder.showMessage(this,
+                                m_dlSales, JProductFinder.PRODUCT_NORMAL);
+                        if( prod != null ) {
+                            assignProduct(prod);
+                            editProduct( code );
+                        }
+                        break;
+                    default:
+                        assignProduct(oProduct);
+                        break;
                 }
-            } else {
-                assignProduct(oProduct);
             }
         } catch (BasicException eData) {        
             assignProduct(null);
@@ -674,11 +697,14 @@ public final class StockDiaryEditor extends javax.swing.JPanel
         }
     }
 
-    private void editProduct() {
+    private void editProduct( String addCode ) {
         if( warnChangesLost() ) {
             createEditor();
             dlgEditProduct.setProduct( productid, null );
             dlgEditProduct.setVisible( true );
+            if( addCode != null) {
+                dlgEditProduct.addBarcode( addCode );
+            }
         }
     }
     
@@ -1050,7 +1076,7 @@ public final class StockDiaryEditor extends javax.swing.JPanel
 
     private void m_EditProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_EditProductActionPerformed
 
-        editProduct();
+        editProduct( null );
     }//GEN-LAST:event_m_EditProductActionPerformed
 
     private void m_jreferenceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_jreferenceActionPerformed

@@ -40,7 +40,8 @@ public class ProductFilterSales extends javax.swing.JPanel implements EditorCrea
 
     private final SentenceList m_sentcat;
     private ComboBoxValModel m_CategoryModel;
-
+    private boolean m_bSimple;
+    
     /**
      * Creates new form ProductFilterSales
      *
@@ -49,6 +50,8 @@ public class ProductFilterSales extends javax.swing.JPanel implements EditorCrea
      * @param bSimple
      */
     public ProductFilterSales(DataLogicSales dlSales, JEditorKeys jKeys, boolean bSimple ) {
+        m_bSimple = bSimple;
+            
         initComponents();
         
         m_sentcat = dlSales.getCategoriesList();
@@ -107,6 +110,12 @@ public class ProductFilterSales extends javax.swing.JPanel implements EditorCrea
             m_jCategory.setModel(m_CategoryModel);
         } catch (BasicException eD) {
             // no hay validacion
+        }
+        
+        if( m_bSimple ) {
+            m_jtxtName.requestFocus();
+        } else {
+            m_jtxtBarCode.requestFocus();
         }
     }
 

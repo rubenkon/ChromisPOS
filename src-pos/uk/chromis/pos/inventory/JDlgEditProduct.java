@@ -91,8 +91,10 @@ public class JDlgEditProduct extends javax.swing.JDialog {
             Logger.getLogger(JDlgEditProduct.class.getName()).log(Level.SEVERE, null, ex);
         }
         jPanelEditor.add( producteditor );
-        
+        getRootPane().setDefaultButton(null);   
+   
     }
+
     public void scrapeSupplierWeb() {
         producteditor.scrapeSupplierWeb();
     }
@@ -105,6 +107,10 @@ public class JDlgEditProduct extends javax.swing.JDialog {
         }
 
         producteditor.setProduct( productID, barcode );
+    }
+
+    public void addBarcode( String barcode ) {
+        producteditor.addBarcode( barcode );
     }
     
     private static Window getWindow(Component parent) {

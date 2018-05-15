@@ -136,7 +136,13 @@ public class BarcodeInfo implements IKeyed {
     
     @Override
     public String toString(){
-        return m_Code;
+        String txt = m_Code + " x " + m_Quantity;
+        
+        if( m_PackType.isEmpty() == false ) {
+            txt += " (" + m_PackType + ")";
+        }
+        
+        return txt;
     }    
 
 }

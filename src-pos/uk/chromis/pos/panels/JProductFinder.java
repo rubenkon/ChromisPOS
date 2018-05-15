@@ -69,7 +69,6 @@ public class JProductFinder extends javax.swing.JDialog {
 
         //ProductFilter jproductfilter = new ProductFilter(app);
         ProductFilterSales jproductfilter = new ProductFilterSales(dlSales, m_jKeys, (productsType==PRODUCT_SIMPLE) );
-        jproductfilter.activate();
         m_jProductSelect.add(jproductfilter, BorderLayout.CENTER);
         switch (productsType) {
             case PRODUCT_NORMAL:
@@ -86,8 +85,9 @@ public class JProductFinder extends javax.swing.JDialog {
         }
        
         jListProducts.setCellRenderer(new ProductRenderer());
+        jproductfilter.activate();
         
-        getRootPane().setDefaultButton(jcmdOK);   
+        getRootPane().setDefaultButton(jButtonExecute);   
    
         m_ReturnProduct = null;
         
@@ -169,7 +169,7 @@ public class JProductFinder extends javax.swing.JDialog {
         jPanel2 = new javax.swing.JPanel();
         m_jProductSelect = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
-        jButton3 = new javax.swing.JButton();
+        jButtonExecute = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jListProducts = new javax.swing.JList();
@@ -189,17 +189,17 @@ public class JProductFinder extends javax.swing.JDialog {
 
         m_jProductSelect.setLayout(new java.awt.BorderLayout());
 
-        jButton3.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
-        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/uk/chromis/images/ok.png"))); // NOI18N
-        jButton3.setText(AppLocal.getIntString("button.executefilter")); // NOI18N
+        jButtonExecute.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        jButtonExecute.setIcon(new javax.swing.ImageIcon(getClass().getResource("/uk/chromis/images/ok.png"))); // NOI18N
+        jButtonExecute.setText(AppLocal.getIntString("button.executefilter")); // NOI18N
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("pos_messages"); // NOI18N
-        jButton3.setToolTipText(bundle.getString("tiptext.executefilter")); // NOI18N
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        jButtonExecute.setToolTipText(bundle.getString("tiptext.executefilter")); // NOI18N
+        jButtonExecute.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                jButtonExecuteActionPerformed(evt);
             }
         });
-        jPanel3.add(jButton3);
+        jPanel3.add(jButtonExecute);
 
         m_jProductSelect.add(jPanel3, java.awt.BorderLayout.SOUTH);
 
@@ -295,7 +295,7 @@ public class JProductFinder extends javax.swing.JDialog {
         
     }//GEN-LAST:event_jListProductsValueChanged
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void jButtonExecuteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonExecuteActionPerformed
 
         try {
             jListProducts.setModel(new MyListData(lpr.loadData()));
@@ -305,11 +305,11 @@ public class JProductFinder extends javax.swing.JDialog {
         } catch (BasicException e) {
         }
         
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_jButtonExecuteActionPerformed
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButtonExecute;
     private javax.swing.JList jListProducts;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
