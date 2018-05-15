@@ -789,6 +789,36 @@
             <column name="LISTNAME" type="varchar(255)"/>
         </createIndex>                                               
     </changeSet>   
+    
+    <changeSet author="Chromis POS" id="Create product barcodes table" >
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="PRODUCTCODES"/>
+            </not>
+        </preConditions>        
+        
+        <createTable tableName="PRODUCTCODES">
+            <column name="BARCODE" type="varchar(255)" >
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="PRODUCT" type="varchar(255)" >
+                <constraints nullable="false" />                
+            </column>
+            <column name="PACKTYPE" type="varchar(255)" >
+                <constraints nullable="true" />                
+            </column>
+            <column name="QUANTITY" type="double precision" >       
+               <constraints nullable="false" />
+            </column>            
+        </createTable>      
+
+        <addForeignKeyConstraint baseColumnNames="PRODUCT"
+                                 constraintName ="PCODES_FK_1"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="PRODUCTCODES"
+                                 referencedTableName="PRODUCTS"/>
+
+    </changeSet>                                                                                                                                                                                                                                                                                                                                                                                                                                          
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
     <!-- End of new tables sections -->
     <!-- ***************************************************************************************** -->
@@ -1614,7 +1644,7 @@
     <changeSet author="Chromis POS" id="Add indexes for MySQL replication">  
          <preConditions onFail="MARK_RAN">
              <not>
-                <indexExists name="PN_INX_ID" />
+                <indexExists indexName="PN_INX_ID" />
              </not>
         </preConditions>
         <createIndex indexName="PN_INX_ID" tableName="PICKUP_NUMBER" unique="true">
@@ -1635,9 +1665,9 @@
     </changeSet>
     
     <!-- ***************************************************************************************** -->
-    <changeSet author="Chromis POS" id="Update to 0.56.6.6">    
+    <changeSet author="Chromis POS" id="Update to 0.57.0">    
         <update tableName="APPLICATIONS">
-            <column name="VERSION" value="0.56.6.6"/>          
+            <column name="VERSION" value="0.57.0"/>          
         </update>  
     </changeSet>
 </databaseChangeLog>

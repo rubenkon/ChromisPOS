@@ -500,6 +500,8 @@ public final class StockDiaryEditor extends javax.swing.JPanel
                     m_cat.refreshCatalogue( assignedProduct.getCategoryID() );
                 }
                 
+                Double dUnits = 0.0;
+                
                 if (prod == null) {
                     productid = null;
                     productref = null;
@@ -531,6 +533,10 @@ public final class StockDiaryEditor extends javax.swing.JPanel
                     productcode = prod.getCode();
                     productname = prod.getName();
                     attsetid = prod.getAttributeSetID();
+                    if( prod.getIsPack() ) {
+                        // Pre-load the units to move with the pack size
+                        dUnits = prod.getPackQuantity();
+                    }
                     try {
                         Double dStock = m_dlSales.findProductStock(
                                 (String) m_LocationsModel.getSelectedKey(),
@@ -567,7 +573,7 @@ public final class StockDiaryEditor extends javax.swing.JPanel
                     m_jbuyprice.setText(Formats.CURRENCY.formatValue(buyprice ) );
                     m_jsellprice.setText(Formats.CURRENCY.formatValue(sellprice) );
                     m_jInCatalog.setSelected(inCatalogue);
-                    m_junits.setText("0");
+                    m_junits.setText( Formats.DOUBLE.formatValue(dUnits) );
                     m_junits.requestFocusInWindow();
                     m_junits.setSelectionStart(0);
                     m_junits.setSelectionEnd(m_junits.getText().length());
