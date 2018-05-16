@@ -114,18 +114,24 @@ public class WebScrapeBookers extends JFrame {
             if( hasValue( value ) ) {
                 Double priceSell = Double.parseDouble(value);
                 Double oldPriceSell = infoOld.getPriceSellTax( 2 );
-                if( oldPriceSell != priceSell ) {
+                if( oldPriceSell.doubleValue() != priceSell.doubleValue() ) {
                     Object[] options = {AppLocal.getIntString("Button.keep")+" @ " + oldPriceSell,
-                        AppLocal.getIntString("Button.accept")+ " @ " + priceSell };
+                        AppLocal.getIntString("Button.accept")+ " @ " + priceSell,
+                        AppLocal.getIntString("Button.Cancel") };
 
-                    if (JOptionPane.showOptionDialog(this,
+                    int nSel = JOptionPane.showOptionDialog(this,
                         AppLocal.getIntString("message.pricechangeaccept") ,
                         AppLocal.getIntString("Menu.Products"),
-                        JOptionPane.YES_NO_OPTION, 
+                        JOptionPane.YES_NO_CANCEL_OPTION, 
                         JOptionPane.INFORMATION_MESSAGE, null,
-                        options, options[1]) == 1) {
-
+                        options, options[1]);
+                    
+                    if( nSel == 1) {
                         infoNew.setPriceSell( priceSell  / (1+(taxRate/100.0) ) );
+                    }
+                    
+                    if( nSel == 2) {
+                        return null; // Cancel
                     }
                 }
 

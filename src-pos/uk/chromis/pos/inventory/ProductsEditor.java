@@ -2177,7 +2177,12 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
                         webscraper.checkEnableOK();
                     } else if( e.getActionCommand().matches("OK") ) {
                         // User has pressed snapshot button
-                        setProductInfo( webscraper.decodeCurrentPage( getProductInfo() ) );
+                        ProductInfoExt info = webscraper.decodeCurrentPage( getProductInfo() );
+                        if( info == null ) {
+                            // Cancelled - leave the scraper in view
+                            return;
+                        }
+                        setProductInfo( info );
 
                         webscraper.saveState();
                         webscraper.setVisible( false ); 
