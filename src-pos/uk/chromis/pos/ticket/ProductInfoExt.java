@@ -352,8 +352,17 @@ public class ProductInfoExt {
         m_rate = rate;
     }
     
+    public final Double getPriceSellTax( int places ) {
+        Double value = getPriceSellTax();
+
+        long factor = (long) Math.pow(10, places);
+        value = value * factor;
+        long tmp = Math.round(value);
+        return (double) tmp / factor;
+    }   
+    
     public final Double getPriceSellTax() {
-        return m_dPriceSell * (1.0 + m_rate);
+            return m_dPriceSell * (1.0 + m_rate);
     }
 
     public final String getPromotionID() {

@@ -9,6 +9,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.util.Properties;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import uk.chromis.data.gui.JImageEditor;
 import uk.chromis.pos.forms.AppLocal;
 import uk.chromis.pos.ticket.ProductInfoExt;
@@ -111,7 +112,23 @@ public class WebScrapeBookers extends JFrame {
             
             value = ExtractString( productInfo, "<li id=\"BPIH_liRRP\">RRP: <span>£", "</span>");
             if( hasValue( value ) ) {
-                infoNew.setPriceSell( Double.parseDouble(value) / (1+(taxRate/100.0) ) );
+                Double priceSell = Double.parseDouble(value);
+                Double oldPriceSell = infoOld.getPriceSellTax( 2 );
+                if( oldPriceSell != priceSell ) {
+                    Object[] options = {AppLocal.getIntString("Button.keep")+" @ " + oldPriceSell,
+                        AppLocal.getIntString("Button.accept")+ " @ " + priceSell };
+
+                    if (JOptionPane.showOptionDialog(this,
+                        AppLocal.getIntString("message.pricechangeaccept") ,
+                        AppLocal.getIntString("Menu.Products"),
+                        JOptionPane.YES_NO_OPTION, 
+                        JOptionPane.INFORMATION_MESSAGE, null,
+                        options, options[1]) == 1) {
+
+                        infoNew.setPriceSell( priceSell  / (1+(taxRate/100.0) ) );
+                    }
+                }
+
             }
 
             value = ExtractString( productInfo, "src=\"/bbimages/", "\" alt=\"" );

@@ -354,7 +354,7 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
         info.setPromotionID((String) m_PromotionModel.getSelectedKey());
         info.setTaxCategoryID((String) taxcatmodel.getSelectedKey());
         info.setAttributeSetID((String) attmodel.getSelectedKey());
-
+        info.setTaxRate(taxeslogic.getTaxRate((TaxCategoryInfo) taxcatmodel.getSelectedItem()));
         info.setImage( m_jImage.getImage());
 
         info.setStockCost( readCurrency( m_jstockcost.getText()));
