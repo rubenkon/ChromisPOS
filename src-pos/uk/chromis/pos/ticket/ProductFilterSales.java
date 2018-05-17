@@ -20,6 +20,7 @@ package uk.chromis.pos.ticket;
 
 import java.awt.Dimension;
 import java.util.List;
+import javax.swing.SwingUtilities;
 import uk.chromis.basic.BasicException;
 import uk.chromis.data.gui.ComboBoxValModel;
 import uk.chromis.data.gui.ListQBFModelNumber;
@@ -70,8 +71,20 @@ public class ProductFilterSales extends javax.swing.JPanel implements EditorCrea
             jLabel6.setVisible(false);
             jButtonMore.setVisible(true);
             this.setPreferredSize( new Dimension(370,70) );
+            SwingUtilities.invokeLater(new Runnable()
+            {
+              public void run() {
+                m_jtxtName.requestFocusInWindow();
+              }
+            });            
         } else {
             jButtonMore.setVisible(false);
+            SwingUtilities.invokeLater(new Runnable()
+            {
+              public void run() {
+                m_jtxtBarCode.requestFocusInWindow();
+              }
+            });            
         }
         
         m_jtxtBarCode.addEditorKeys(jKeys);        
@@ -101,8 +114,11 @@ public class ProductFilterSales extends javax.swing.JPanel implements EditorCrea
         m_jPriceBuy.reset();
         m_jPriceSell.reset();
 
-        m_jtxtName.activate();
-        
+        if( jButtonMore.isVisible() )
+            m_jtxtName.activate();
+        else
+            m_jtxtBarCode.activate();
+            
         try {
             List catlist = m_sentcat.list();
             catlist.add(0, null);
@@ -110,12 +126,6 @@ public class ProductFilterSales extends javax.swing.JPanel implements EditorCrea
             m_jCategory.setModel(m_CategoryModel);
         } catch (BasicException eD) {
             // no hay validacion
-        }
-        
-        if( m_bSimple ) {
-            m_jtxtName.requestFocus();
-        } else {
-            m_jtxtBarCode.requestFocus();
         }
     }
 
@@ -205,15 +215,15 @@ public class ProductFilterSales extends javax.swing.JPanel implements EditorCrea
             }
         });
         add(jButtonMore);
-        jButtonMore.setBounds(360, 10, 30, 25);
+        jButtonMore.setBounds(390, 10, 30, 25);
 
         m_jtxtBarCode.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         add(m_jtxtBarCode);
-        m_jtxtBarCode.setBounds(130, 10, 290, 25);
+        m_jtxtBarCode.setBounds(130, 40, 260, 25);
 
         m_jtxtName.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         add(m_jtxtName);
-        m_jtxtName.setBounds(130, 40, 290, 25);
+        m_jtxtName.setBounds(130, 10, 260, 25);
 
         m_jCategory.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         add(m_jCategory);
@@ -244,12 +254,12 @@ public class ProductFilterSales extends javax.swing.JPanel implements EditorCrea
         jLabel1.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jLabel1.setText(AppLocal.getIntString("label.prodbarcode")); // NOI18N
         add(jLabel1);
-        jLabel1.setBounds(20, 10, 110, 25);
+        jLabel1.setBounds(20, 40, 110, 25);
 
         jLabel5.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jLabel5.setText(AppLocal.getIntString("label.prodname")); // NOI18N
         add(jLabel5);
-        jLabel5.setBounds(20, 40, 110, 25);
+        jLabel5.setBounds(20, 10, 110, 25);
 
         jLabel2.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jLabel2.setText(AppLocal.getIntString("label.prodcategory")); // NOI18N
@@ -299,6 +309,7 @@ public class ProductFilterSales extends javax.swing.JPanel implements EditorCrea
         jLabel4.setVisible(true);
         jLabel6.setVisible(true);
         jButtonMore.setVisible(false);
+        m_jtxtBarCode.requestFocusInWindow();
         this.setPreferredSize( new Dimension(370,200) );
     }//GEN-LAST:event_jButtonMoreActionPerformed
 
