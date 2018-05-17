@@ -193,13 +193,16 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
         m_jAlwaysAvailable.addActionListener(dirty);
         m_jDiscounted.addActionListener(dirty);
         m_jManageStock.addActionListener(dirty);
+        jOtherBarcode.addActionListener(dirty);
+        jOtherPackType.addActionListener(dirty);
+        jOtherQuantity.addActionListener(dirty);
 
         m_jPriceBuy.getDocument().addDocumentListener(new PriceBuyManager());
         m_jPriceSell.getDocument().addDocumentListener(new PriceSellManager());
         m_jPriceSellTax.getDocument().addDocumentListener(new PriceTaxManager());
         m_jTax.addActionListener(new PriceTaxManager());
         m_jmargin.getDocument().addDocumentListener(new MarginManager());
-
+        
         // Barcode scanners add CR to the end of the string - we need to ignore
         // that to prevent default button being activated
         jOtherBarcode.addActionListener( new java.awt.event.ActionListener() {
@@ -2219,9 +2222,13 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
         }
 
         jListBarcodes.setModel( m_BarcodesModel );
+        
+        jOtherBarcode.setText("");
+        jOtherQuantity.setText("");
     }
     
     private void jButtonAddCodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddCodeActionPerformed
+        
         if( jOtherBarcode.getText().isEmpty() )
             return;
         
@@ -2231,7 +2238,8 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
             m_dlSales.addProductCode( info );
             updateBarcodeList();
         } catch (BasicException ex) {
-            Logger.getLogger(ProductsEditor.class.getName()).log(Level.SEVERE, null, ex);
+            MessageInf msg = new MessageInf(ex);
+            msg.show(this);                   
         }
     }//GEN-LAST:event_jButtonAddCodeActionPerformed
 
@@ -2242,7 +2250,8 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
             try {
                 m_dlSales.removeProductCode( info.getCode() );
             } catch (BasicException ex) {
-                Logger.getLogger(ProductsEditor.class.getName()).log(Level.SEVERE, null, ex);
+                MessageInf msg = new MessageInf(ex);
+                msg.show(this);                   
             }
             updateBarcodeList();
         }
