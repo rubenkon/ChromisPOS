@@ -174,8 +174,8 @@ public class JProductFinder extends javax.swing.JDialog {
         jScrollPane1 = new javax.swing.JScrollPane();
         jListProducts = new javax.swing.JList();
         jPanel1 = new javax.swing.JPanel();
-        jcmdCancel = new javax.swing.JButton();
         jcmdOK = new javax.swing.JButton();
+        jcmdCancel = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle(AppLocal.getIntString("form.productslist")); // NOI18N
@@ -230,20 +230,6 @@ public class JProductFinder extends javax.swing.JDialog {
 
         jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
-        jcmdCancel.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
-        jcmdCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/uk/chromis/images/cancel.png"))); // NOI18N
-        jcmdCancel.setText(AppLocal.getIntString("Button.Cancel")); // NOI18N
-        jcmdCancel.setMargin(new java.awt.Insets(8, 16, 8, 16));
-        jcmdCancel.setMaximumSize(new java.awt.Dimension(103, 44));
-        jcmdCancel.setMinimumSize(new java.awt.Dimension(103, 44));
-        jcmdCancel.setPreferredSize(new java.awt.Dimension(103, 44));
-        jcmdCancel.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jcmdCancelActionPerformed(evt);
-            }
-        });
-        jPanel1.add(jcmdCancel);
-
         jcmdOK.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jcmdOK.setIcon(new javax.swing.ImageIcon(getClass().getResource("/uk/chromis/images/ok.png"))); // NOI18N
         jcmdOK.setText(AppLocal.getIntString("Button.OK")); // NOI18N
@@ -258,6 +244,20 @@ public class JProductFinder extends javax.swing.JDialog {
             }
         });
         jPanel1.add(jcmdOK);
+
+        jcmdCancel.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        jcmdCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/uk/chromis/images/cancel.png"))); // NOI18N
+        jcmdCancel.setText(AppLocal.getIntString("Button.Cancel")); // NOI18N
+        jcmdCancel.setMargin(new java.awt.Insets(8, 16, 8, 16));
+        jcmdCancel.setMaximumSize(new java.awt.Dimension(103, 44));
+        jcmdCancel.setMinimumSize(new java.awt.Dimension(103, 44));
+        jcmdCancel.setPreferredSize(new java.awt.Dimension(103, 44));
+        jcmdCancel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jcmdCancelActionPerformed(evt);
+            }
+        });
+        jPanel1.add(jcmdCancel);
 
         jPanel2.add(jPanel1, java.awt.BorderLayout.SOUTH);
 
