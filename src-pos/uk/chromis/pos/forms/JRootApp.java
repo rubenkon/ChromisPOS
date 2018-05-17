@@ -897,7 +897,7 @@ public class JRootApp extends JPanel implements AppView {
                 }
                 JOptionPane.showMessageDialog(null,
                         AppLocal.getIntString("message.nocard"),
-                        "User Card", JOptionPane.WARNING_MESSAGE);
+                        "User ID", JOptionPane.WARNING_MESSAGE);
             } else {
                 openAppView(user);
             }
