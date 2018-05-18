@@ -593,8 +593,13 @@ public final class StockDiaryEditor extends javax.swing.JPanel
                     m_cat.showCatalogPanel( assignedProduct.getCategoryID() );
                 }
                 
-                // Not dirty from user changes
-                m_Dirty.setDirty(false);
+                if( prod.getIsPack() ) {
+                    // if pack - set dirty flag because we have set units
+                    m_Dirty.setDirty(false);
+                } else {
+                    // Not dirty from user changes
+                    m_Dirty.setDirty(false);
+                }
             }
         }
     }
