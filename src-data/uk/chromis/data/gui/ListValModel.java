@@ -73,6 +73,8 @@ public class ListValModel extends AbstractListModel implements ListModel {
      */
     public void add(Object c) {
         m_aData.add(c);
+        int index = m_aData.indexOf(c);
+        fireContentsChanged( this, index, index );
     }
 
     /**
@@ -80,6 +82,8 @@ public class ListValModel extends AbstractListModel implements ListModel {
      * @param c
      */
     public void del(Object c) {
+        int index = m_aData.indexOf(c);
+        fireContentsChanged( this, index-1, index );
         m_aData.remove(c);
     }
 
@@ -90,6 +94,7 @@ public class ListValModel extends AbstractListModel implements ListModel {
      */
     public void add(int index, Object c) {
         m_aData.add(index, c);
+        fireContentsChanged( this, index, index );
     }
     
     /**
@@ -98,6 +103,7 @@ public class ListValModel extends AbstractListModel implements ListModel {
      */
     public void refresh(List aData) {
         m_aData = aData;
+        fireContentsChanged( this, 0, m_aData.size()-1 );
     }
   
     /**
