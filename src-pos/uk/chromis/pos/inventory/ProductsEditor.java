@@ -33,6 +33,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
@@ -233,7 +234,6 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
         m_PromotionModel = new ComboBoxValModel(m_sentpromotion.list());
         jComboBoxPromotion.setModel(m_PromotionModel);
 
-        m_BarcodesModel = new ListValModel();
         jListBarcodes.setModel(m_BarcodesModel);
 
         taxcatmodel = new ComboBoxValModel(taxcatsent.list());
@@ -543,6 +543,7 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
         calculateMargin();
         calculatePriceSellTax();
         calculateGP();
+        updateBarcodeList();
     }
 
     /**
@@ -639,6 +640,7 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
         calculateMargin();
         calculatePriceSellTax();
         calculateGP();
+        updateBarcodeList();
 
     }
 
@@ -760,6 +762,8 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
         calculateMargin();
         calculatePriceSellTax();
         calculateGP();
+        updateBarcodeList();
+
     }
 
     /**
@@ -824,6 +828,7 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
         calculateMargin();
         calculatePriceSellTax();
         calculateGP();
+        updateBarcodeList();
     }
 
     /**
@@ -2208,21 +2213,20 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
 
     private void updateBarcodeList() {
         String product =  getID();
+        
         if( product != null && !product.isEmpty() ) {
             m_sentbarcodes = m_dlSales.getBarcodesList( product );
             try {
-                m_BarcodesModel = new ListValModel( m_sentbarcodes.list() );
+                m_BarcodesModel.refresh( m_sentbarcodes.list() );
             } catch (BasicException ex) {
                 MessageInf msg = new MessageInf(ex);
-                msg.show(this);                   
-                m_BarcodesModel = new ListValModel();
+                msg.show(this);   
+                m_BarcodesModel.refresh( new ArrayList() );
             }
         } else {
-            m_BarcodesModel = new ListValModel();
+            m_BarcodesModel.refresh( new ArrayList() );
         }
 
-        jListBarcodes.setModel( m_BarcodesModel );
-        
         jOtherBarcode.setText("");
         jOtherQuantity.setText("");
     }
