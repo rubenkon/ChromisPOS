@@ -112,9 +112,10 @@ public class WebScrapeBookers extends JFrame {
             
             value = ExtractString( productInfo, "<li id=\"BPIH_liRRP\">RRP: <span>£", "</span>");
             if( hasValue( value ) ) {
-                double priceSell = Double.parseDouble(value);
-                double oldPriceSell = infoOld.getPriceSellTax( 2 );
-                if( oldPriceSell != 0.0 && oldPriceSell != priceSell ) {
+                Double priceSell = Double.parseDouble(value);
+                Double oldPriceSell = infoOld.getPriceSellTax( 2 );
+                if( oldPriceSell != null && oldPriceSell.doubleValue() != 0.0
+                        && oldPriceSell != priceSell ) {
                     Object[] options = {AppLocal.getIntString("Button.keep")+" @ " + oldPriceSell,
                         AppLocal.getIntString("Button.accept")+ " @ " + priceSell,
                         AppLocal.getIntString("Button.Cancel") };
