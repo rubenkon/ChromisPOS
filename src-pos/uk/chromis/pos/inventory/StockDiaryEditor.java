@@ -416,7 +416,7 @@ public final class StockDiaryEditor extends javax.swing.JPanel
         stocksecurity = (Double) Formats.DOUBLE.parseValue(m_jminimum.getText());
         stockmaximum = (Double) Formats.DOUBLE.parseValue(m_jmaximum.getText());
  
-        Double dValue=0.0;
+        Double dValue= new Double(0.0);
        
         try {
             dValue = (Double) DOUBLE.parseValue(m_junits.getText());
@@ -424,15 +424,15 @@ public final class StockDiaryEditor extends javax.swing.JPanel
             throw new BasicException( AppLocal.getIntString("message.valuetoolarge") );
         }
         
-        if( dValue > 10000 ) { // Sanity check in case barcode scanned in this field
+        if( dValue > 10000.00 ) { // Sanity check in case barcode scanned in this field
             throw new BasicException( AppLocal.getIntString("message.valuetoolarge") );
         }
         
-        if( stocksecurity > 10000 ) { // Sanity check in case barcode scanned in this field
+        if( stocksecurity > 10000.00 ) { // Sanity check in case barcode scanned in this field
             throw new BasicException( AppLocal.getIntString("message.valuetoolarge") );
         }
 
-        if( stockmaximum > 10000 ) { // Sanity check in case barcode scanned in this field
+        if( stockmaximum > 10000.00 ) { // Sanity check in case barcode scanned in this field
             throw new BasicException( AppLocal.getIntString("message.valuetoolarge") );
         }
         
@@ -593,9 +593,9 @@ public final class StockDiaryEditor extends javax.swing.JPanel
                     m_cat.showCatalogPanel( assignedProduct.getCategoryID() );
                 }
                 
-                if( prod.getIsPack() ) {
+                if( prod != null && prod.getIsPack() ) {
                     // if pack - set dirty flag because we have set units
-                    m_Dirty.setDirty(false);
+                    m_Dirty.setDirty(true);
                 } else {
                     // Not dirty from user changes
                     m_Dirty.setDirty(false);

@@ -88,10 +88,10 @@ public class ProductInfoExt {
         categoryid = null;
         taxcategoryid = null;
         attributesetid = null;
-        m_dPriceBuy = 0.0;
-        m_dPriceSell = 0.0;
-        m_stockCost = 0.0;
-        m_stockVolume = 0.0;
+        m_dPriceBuy = new Double(0.0);
+        m_dPriceSell = new Double(0.0);
+        m_stockCost = new Double(0.0);
+        m_stockVolume = new Double(0.0);
         m_Image = null;
         m_bKitchen = false;
         m_bService = false;
@@ -101,7 +101,7 @@ public class ProductInfoExt {
         m_bVerpatrib = false;
         m_sTextTip = null;
         m_bWarranty = false;
-        m_dStockUnits = 0.0;
+        m_dStockUnits = new Double(0.0);
         m_sAlias = null;
         m_bAlwaysAvailable = false;
         m_manageStock = true;
@@ -110,11 +110,11 @@ public class ProductInfoExt {
         m_promotionid = null;
         m_bCatalog = true;
         m_bRetired = false;
-        m_catorder = 0.0;
+        m_catorder = new Double(0.0);
         m_bPack = false;
-        m_packquantity = 0.0;
+        m_packquantity = new Double(0.0);
         m_packproduct = null;
-        m_rate = 0.0;
+        m_rate = new Double(0.0);
     }
 
     public ProductInfoExt( ProductInfoExt copy ) {
@@ -353,6 +353,9 @@ public class ProductInfoExt {
     }
     
     public final Double getPriceSellTax( int places ) {
+        if( m_dPriceSell == null ) 
+            return null;
+        
         Double value = getPriceSellTax();
 
         long factor = (long) Math.pow(10, places);
@@ -362,6 +365,9 @@ public class ProductInfoExt {
     }   
     
     public final Double getPriceSellTax() {
+        if( m_dPriceSell == null ) 
+            return null;
+        else
             return m_dPriceSell * (1.0 + m_rate);
     }
 

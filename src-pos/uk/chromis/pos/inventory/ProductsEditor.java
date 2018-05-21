@@ -1342,6 +1342,9 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
 
         jLabel27.setText("jLabel27");
 
+        setMinimumSize(new java.awt.Dimension(750, 450));
+        setName(""); // NOI18N
+        setPreferredSize(new java.awt.Dimension(750, 450));
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         m_jTitle.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
@@ -1364,7 +1367,7 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
             }
         });
         jPanel1.add(m_jRef);
-        m_jRef.setBounds(130, 10, 80, 25);
+        m_jRef.setBounds(130, 10, 270, 25);
 
         jLabel34.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jLabel34.setText(AppLocal.getIntString("Label.Alias")); // NOI18N
@@ -1570,6 +1573,9 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
 
         jLabel11.setText(bundle.getString("label.barcode")); // NOI18N
 
+        jOtherBarcode.setMaximumSize(new java.awt.Dimension(170, 20));
+        jOtherBarcode.setPreferredSize(new java.awt.Dimension(170, 19));
+
         jLabel12.setText(bundle.getString("label.quantity")); // NOI18N
 
         jOtherQuantity.setToolTipText("");
@@ -1596,7 +1602,7 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
                             .addComponent(jOtherQuantity, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jOtherPackType, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addContainerGap(24, Short.MAX_VALUE))
-                    .addComponent(jOtherBarcode)))
+                    .addComponent(jOtherBarcode, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         jPanel10Layout.setVerticalGroup(
             jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1655,9 +1661,9 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
                 .addGroup(jPanelCodesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanelCodesLayout.createSequentialGroup()
-                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(10, 10, 10)
-                        .addComponent(m_jCode, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(m_jCode, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(10, 10, 10)
                         .addComponent(m_jCodetype, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(10, 10, 10)
@@ -1675,7 +1681,7 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
                     .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(138, Short.MAX_VALUE))
+                .addContainerGap(136, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab(bundle.getString("label.barcodes"), jPanelCodes); // NOI18N

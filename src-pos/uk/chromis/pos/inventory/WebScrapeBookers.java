@@ -77,8 +77,8 @@ public class WebScrapeBookers extends JFrame {
         String productInfo = WebView.getPageSource();
         if( !productInfo.isEmpty() ) {
             String value;
-            Double taxRate = 0.0;
-            Double packSize = 1.0;
+            Double taxRate = new Double(0.0);
+            Double packSize = new Double(1.0);
             Properties props = infoNew.getProperties();
 
             value = ExtractString( productInfo, "<h3>", "<");
@@ -112,9 +112,9 @@ public class WebScrapeBookers extends JFrame {
             
             value = ExtractString( productInfo, "<li id=\"BPIH_liRRP\">RRP: <span>£", "</span>");
             if( hasValue( value ) ) {
-                Double priceSell = Double.parseDouble(value);
-                Double oldPriceSell = infoOld.getPriceSellTax( 2 );
-                if( oldPriceSell.doubleValue() != priceSell.doubleValue() ) {
+                double priceSell = Double.parseDouble(value);
+                double oldPriceSell = infoOld.getPriceSellTax( 2 );
+                if( oldPriceSell != 0.0 && oldPriceSell != priceSell ) {
                     Object[] options = {AppLocal.getIntString("Button.keep")+" @ " + oldPriceSell,
                         AppLocal.getIntString("Button.accept")+ " @ " + priceSell,
                         AppLocal.getIntString("Button.Cancel") };
@@ -133,6 +133,8 @@ public class WebScrapeBookers extends JFrame {
                     if( nSel == 2) {
                         return null; // Cancel
                     }
+                } else {
+                    infoNew.setPriceSell( priceSell  / (1+(taxRate/100.0) ) );
                 }
 
             }
