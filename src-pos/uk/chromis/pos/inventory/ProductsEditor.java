@@ -1342,9 +1342,9 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
 
         jLabel27.setText("jLabel27");
 
-        setMinimumSize(new java.awt.Dimension(750, 450));
+        setMinimumSize(new java.awt.Dimension(730, 450));
         setName(""); // NOI18N
-        setPreferredSize(new java.awt.Dimension(750, 450));
+        setPreferredSize(new java.awt.Dimension(730, 450));
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         m_jTitle.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N

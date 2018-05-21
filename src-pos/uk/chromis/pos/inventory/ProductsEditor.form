@@ -15,11 +15,11 @@
   </NonVisualComponents>
   <Properties>
     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-      <Dimension value="[750, 450]"/>
+      <Dimension value="[730, 450]"/>
     </Property>
     <Property name="name" type="java.lang.String" value="" noResource="true"/>
     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-      <Dimension value="[750, 450]"/>
+      <Dimension value="[730, 450]"/>
     </Property>
   </Properties>
   <AuxValues>
