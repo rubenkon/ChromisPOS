@@ -643,6 +643,26 @@ public class DataLogicSales extends BeanFactoryDataSingle {
             Datas.OBJECT, Datas.DOUBLE
         }), ProductInfoExt.getSerializerRead());
     }
+    
+    public SentenceList getProductListSearch( int nLimit ) {
+        return new StaticSentence(s,
+                "SELECT DISTINCT "
+                + getSelectFieldList()
+                + "FROM STOCKCURRENT C RIGHT OUTER JOIN PRODUCTS P ON (C.PRODUCT = P.ID) "
+                + "LEFT JOIN PRODUCTCODES PC ON (PC.PRODUCT = P.ID) "
+                + "LEFT JOIN TAXES T ON P.TAXCAT = T.CATEGORY "
+                + "WHERE P.ISCOM = " + s.DB.FALSE()
+                + " AND P.RETIRED = " + s.DB.FALSE()
+                + " AND ( "
+                + " P.NAME LIKE ?"
+                + " OR P.REFERENCE = ?"
+                + " OR P.CODE = ?"
+                + " OR PC.BARCODE = ?"
+                + ") ORDER BY P.NAME "
+                + ( (nLimit > 0) ? " LIMIT " + nLimit : "" ),
+                new SerializerWriteBasic(new Datas[]{ Datas.STRING, Datas.STRING, Datas.STRING, Datas.STRING }),
+                ProductInfoExt.getSerializerRead());
+    }
 
     public SentenceList getProductListAuxiliar(int nLimit) {
         return new StaticSentence(s, new QBFBuilder(
