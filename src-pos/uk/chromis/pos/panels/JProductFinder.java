@@ -25,6 +25,8 @@ import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Window;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import uk.chromis.basic.BasicException;
 import uk.chromis.data.user.ListProvider;
@@ -32,6 +34,7 @@ import uk.chromis.data.user.ListProviderCreator;
 import uk.chromis.pos.forms.AppLocal;
 import uk.chromis.pos.forms.DataLogicSales;
 import uk.chromis.pos.ticket.ProductFilterSales;
+import uk.chromis.pos.ticket.ProductFilterSearch;
 import uk.chromis.pos.ticket.ProductInfoExt;
 import uk.chromis.pos.ticket.ProductRenderer;
 
@@ -50,6 +53,10 @@ public class JProductFinder extends javax.swing.JDialog {
     public final static int PRODUCT_RECIPE = 3;
     public final static int PRODUCT_SIMPLE = 4;
     
+    private int m_productsType = PRODUCT_ALL;
+    private DataLogicSales m_dlSales;
+    private Component m_FilterComponent;
+    
     /** Creates new form JProductFinder */
     private JProductFinder(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -62,36 +69,58 @@ public class JProductFinder extends javax.swing.JDialog {
     private static int PRODUCT_FINDER_LIMIT = 1000;
     
     private ProductInfoExt init(DataLogicSales dlSales, int productsType ) {
-
+        m_productsType = productsType;
+        m_dlSales = dlSales;
+        
         initComponents();
         
         jScrollPane1.getVerticalScrollBar().setPreferredSize(new Dimension(35, 35));
+        jListProducts.setCellRenderer(new ProductRenderer());
 
-        //ProductFilter jproductfilter = new ProductFilter(app);
-        ProductFilterSales jproductfilter = new ProductFilterSales(dlSales, m_jKeys, (productsType==PRODUCT_SIMPLE) );
-        m_jProductSelect.add(jproductfilter, BorderLayout.CENTER);
-        switch (productsType) {
+        switch (m_productsType) {
             case PRODUCT_NORMAL:
-            case PRODUCT_SIMPLE:
+            {
+                ProductFilterSales jproductfilter = new ProductFilterSales(m_dlSales, m_jKeys );
+                m_jProductSelect.add(jproductfilter, BorderLayout.CENTER);
                 lpr = new ListProviderCreator(dlSales.getProductListNormal( PRODUCT_FINDER_LIMIT ), jproductfilter);
-                break;
+                jproductfilter.activate();
+                m_FilterComponent = jproductfilter;
+                jButtonMore.setEnabled(false);
+            }  break;
+            case PRODUCT_SIMPLE:
+            {
+                ProductFilterSearch jproductfilter = new ProductFilterSearch(m_dlSales, m_jKeys );
+                m_jProductSelect.add(jproductfilter, BorderLayout.CENTER);
+                lpr = new ListProviderCreator(dlSales.getProductListSearch( PRODUCT_FINDER_LIMIT ), jproductfilter);
+                jproductfilter.activate();
+                m_FilterComponent = jproductfilter;
+                jproductfilter.setVisible(true);
+                jButtonMore.setEnabled(true);
+            }  break;
             case PRODUCT_AUXILIAR:               
+            {
+                ProductFilterSales jproductfilter = new ProductFilterSales(m_dlSales, m_jKeys );
+                m_jProductSelect.add(jproductfilter, BorderLayout.CENTER);
                 lpr = new ListProviderCreator(dlSales.getProductListAuxiliar(PRODUCT_FINDER_LIMIT), jproductfilter);
-                break;
+                jproductfilter.activate();
+                m_FilterComponent = jproductfilter;
+                jButtonMore.setEnabled(false);
+            }   break;
             default: // PRODUCT_ALL
+            {
+                ProductFilterSales jproductfilter = new ProductFilterSales(m_dlSales, m_jKeys );
+                m_jProductSelect.add(jproductfilter, BorderLayout.CENTER);
                 lpr = new ListProviderCreator(dlSales.getProductList(PRODUCT_FINDER_LIMIT), jproductfilter);
-                break;
-                
+                jproductfilter.activate();
+                m_FilterComponent = jproductfilter;
+                jButtonMore.setEnabled(false);
+            }   break;                
         }
        
-        jListProducts.setCellRenderer(new ProductRenderer());
-        jproductfilter.activate();
-        
         getRootPane().setDefaultButton(jButtonExecute);   
    
         m_ReturnProduct = null;
         
-        //show();
         setVisible(true);
         
         return m_ReturnProduct;
@@ -170,6 +199,7 @@ public class JProductFinder extends javax.swing.JDialog {
         m_jProductSelect = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jButtonExecute = new javax.swing.JButton();
+        jButtonMore = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jListProducts = new javax.swing.JList();
@@ -180,6 +210,8 @@ public class JProductFinder extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle(AppLocal.getIntString("form.productslist")); // NOI18N
+        setMinimumSize(new java.awt.Dimension(670, 361));
+        setPreferredSize(new java.awt.Dimension(670, 361));
 
         jPanel4.setLayout(new java.awt.BorderLayout());
         jPanel4.add(m_jKeys, java.awt.BorderLayout.NORTH);
@@ -189,6 +221,8 @@ public class JProductFinder extends javax.swing.JDialog {
         jPanel2.setLayout(new java.awt.BorderLayout());
 
         m_jProductSelect.setLayout(new java.awt.BorderLayout());
+
+        jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jButtonExecute.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jButtonExecute.setIcon(new javax.swing.ImageIcon(getClass().getResource("/uk/chromis/images/ok.png"))); // NOI18N
@@ -200,7 +234,15 @@ public class JProductFinder extends javax.swing.JDialog {
                 jButtonExecuteActionPerformed(evt);
             }
         });
-        jPanel3.add(jButtonExecute);
+        jPanel3.add(jButtonExecute, new org.netbeans.lib.awtextra.AbsoluteConstraints(145, 5, -1, -1));
+
+        jButtonMore.setText("...");
+        jButtonMore.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonMoreActionPerformed(evt);
+            }
+        });
+        jPanel3.add(jButtonMore, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 0, -1, -1));
 
         m_jProductSelect.add(jPanel3, java.awt.BorderLayout.SOUTH);
 
@@ -213,6 +255,7 @@ public class JProductFinder extends javax.swing.JDialog {
 
         jListProducts.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jListProducts.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jListProducts.setPreferredSize(new java.awt.Dimension(400, 300));
         jListProducts.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jListProductsMouseClicked(evt);
@@ -309,14 +352,26 @@ public class JProductFinder extends javax.swing.JDialog {
             if (jListProducts.getModel().getSize() > 0) {
                 jListProducts.setSelectedIndex(0);
             }
-        } catch (BasicException e) {
+        } catch (BasicException ex) {
+            Logger.getLogger(JProductFinder.class.getName()).log(Level.SEVERE, null, ex);
         }
         
     }//GEN-LAST:event_jButtonExecuteActionPerformed
+
+    private void jButtonMoreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonMoreActionPerformed
+        ProductFilterSales jproductfilter = new ProductFilterSales(m_dlSales, m_jKeys );
+        m_jProductSelect.remove(m_FilterComponent);
+        m_jProductSelect.add(jproductfilter, BorderLayout.CENTER);
+        lpr = new ListProviderCreator(m_dlSales.getProductListNormal( PRODUCT_FINDER_LIMIT ), jproductfilter);
+        jproductfilter.activate();
+        m_FilterComponent = jproductfilter;
+        jButtonMore.setEnabled(false);
+    }//GEN-LAST:event_jButtonMoreActionPerformed
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonExecute;
+    private javax.swing.JButton jButtonMore;
     private javax.swing.JList jListProducts;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
