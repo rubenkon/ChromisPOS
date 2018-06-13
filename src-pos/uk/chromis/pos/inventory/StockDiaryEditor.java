@@ -202,7 +202,7 @@ public final class StockDiaryEditor extends javax.swing.JPanel
         m_jreference.setEnabled(false);
         m_EditProduct.setEnabled(false);
         m_jcodebar.setEnabled(false);
-        m_jEnter.setEnabled(false);
+        m_jCodeSearch.setEnabled(false);
         m_jLocation.setEnabled(false);
         jproduct.setEnabled(false);
         m_jminimum.setEnabled(false);
@@ -263,7 +263,7 @@ public final class StockDiaryEditor extends javax.swing.JPanel
         m_jreason.setEnabled(true);
         m_jreference.setEnabled(true);
         m_jcodebar.setEnabled(true);
-        m_jEnter.setEnabled(true);
+        m_jCodeSearch.setEnabled(true);
         m_jLocation.setEnabled(true);
         jproduct.setEnabled(true);
         m_jminimum.setEnabled(true);
@@ -324,7 +324,7 @@ public final class StockDiaryEditor extends javax.swing.JPanel
         m_jreference.setEnabled(false);
         m_EditProduct.setEnabled(false);
         m_jcodebar.setEnabled(false);
-        m_jEnter.setEnabled(false);
+        m_jCodeSearch.setEnabled(false);
         m_jLocation.setEnabled(false);
         jproduct.setEnabled(false);
 
@@ -388,7 +388,7 @@ public final class StockDiaryEditor extends javax.swing.JPanel
         m_jreference.setEnabled(false);
         m_EditProduct.setEnabled(false);
         m_jcodebar.setEnabled(false);
-        m_jEnter.setEnabled(false);
+        m_jCodeSearch.setEnabled(false);
         m_jLocation.setEnabled(false);
         jproduct.setEnabled(true);
         m_jminimum.setEnabled(true);
@@ -789,7 +789,7 @@ public final class StockDiaryEditor extends javax.swing.JPanel
         m_jLocation = new javax.swing.JComboBox();
         jLabel7 = new javax.swing.JLabel();
         m_jcodebar = new javax.swing.JTextField();
-        m_jEnter = new javax.swing.JButton();
+        m_jCodeSearch = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         m_jreference = new javax.swing.JTextField();
         m_EditProduct = new javax.swing.JButton();
@@ -811,6 +811,7 @@ public final class StockDiaryEditor extends javax.swing.JPanel
         jLabel14 = new javax.swing.JLabel();
         m_jsellprice = new javax.swing.JTextField();
         m_jInCatalog = new eu.hansolo.custom.SteelCheckBox();
+        m_jRefSearch = new javax.swing.JButton();
         catcontainer = new javax.swing.JPanel();
 
         setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
@@ -903,20 +904,20 @@ public final class StockDiaryEditor extends javax.swing.JPanel
         });
         jPanel1.add(m_jcodebar, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 80, 200, 25));
 
-        m_jEnter.setIcon(new javax.swing.ImageIcon(getClass().getResource("/uk/chromis/images/barcode.png"))); // NOI18N
-        m_jEnter.setToolTipText(bundle.getString("tiptext.getbarcode")); // NOI18N
-        m_jEnter.setFocusPainted(false);
-        m_jEnter.setFocusable(false);
-        m_jEnter.setMaximumSize(new java.awt.Dimension(54, 33));
-        m_jEnter.setMinimumSize(new java.awt.Dimension(54, 33));
-        m_jEnter.setPreferredSize(new java.awt.Dimension(54, 33));
-        m_jEnter.setRequestFocusEnabled(false);
-        m_jEnter.addActionListener(new java.awt.event.ActionListener() {
+        m_jCodeSearch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/uk/chromis/images/barcode.png"))); // NOI18N
+        m_jCodeSearch.setToolTipText(bundle.getString("tiptext.getbarcode")); // NOI18N
+        m_jCodeSearch.setFocusPainted(false);
+        m_jCodeSearch.setFocusable(false);
+        m_jCodeSearch.setMaximumSize(new java.awt.Dimension(54, 33));
+        m_jCodeSearch.setMinimumSize(new java.awt.Dimension(54, 33));
+        m_jCodeSearch.setPreferredSize(new java.awt.Dimension(54, 33));
+        m_jCodeSearch.setRequestFocusEnabled(false);
+        m_jCodeSearch.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                m_jEnterActionPerformed(evt);
+                m_jCodeSearchActionPerformed(evt);
             }
         });
-        jPanel1.add(m_jEnter, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 73, 40, -1));
+        jPanel1.add(m_jCodeSearch, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 70, 40, -1));
 
         jLabel3.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jLabel3.setText(AppLocal.getIntString("label.maximum")); // NOI18N
@@ -946,7 +947,7 @@ public final class StockDiaryEditor extends javax.swing.JPanel
                 m_EditProductActionPerformed(evt);
             }
         });
-        jPanel1.add(m_EditProduct, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 110, 40, -1));
+        jPanel1.add(m_EditProduct, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 130, 40, -1));
 
         jLabel9.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jLabel9.setText(AppLocal.getIntString("label.attributes")); // NOI18N
@@ -1068,6 +1069,21 @@ public final class StockDiaryEditor extends javax.swing.JPanel
         });
         jPanel1.add(m_jInCatalog, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 70, 180, -1));
 
+        m_jRefSearch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/uk/chromis/images/products24.png"))); // NOI18N
+        m_jRefSearch.setToolTipText(bundle.getString("tiptext.getbarcode")); // NOI18N
+        m_jRefSearch.setFocusPainted(false);
+        m_jRefSearch.setFocusable(false);
+        m_jRefSearch.setMaximumSize(new java.awt.Dimension(54, 33));
+        m_jRefSearch.setMinimumSize(new java.awt.Dimension(54, 33));
+        m_jRefSearch.setPreferredSize(new java.awt.Dimension(54, 33));
+        m_jRefSearch.setRequestFocusEnabled(false);
+        m_jRefSearch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                m_jRefSearchActionPerformed(evt);
+            }
+        });
+        jPanel1.add(m_jRefSearch, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 100, 40, -1));
+
         add(jPanel1, java.awt.BorderLayout.PAGE_START);
 
         catcontainer.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
@@ -1096,11 +1112,11 @@ public final class StockDiaryEditor extends javax.swing.JPanel
 
     }//GEN-LAST:event_m_jcodebarActionPerformed
 
-    private void m_jEnterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_jEnterActionPerformed
+    private void m_jCodeSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_jCodeSearchActionPerformed
 
         assignProductByCode();
 
-    }//GEN-LAST:event_m_jEnterActionPerformed
+    }//GEN-LAST:event_m_jCodeSearchActionPerformed
 
     private void jEditAttributesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jEditAttributesActionPerformed
 
@@ -1161,6 +1177,10 @@ public final class StockDiaryEditor extends javax.swing.JPanel
     private void m_jInCatalogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_jInCatalogActionPerformed
     }//GEN-LAST:event_m_jInCatalogActionPerformed
 
+    private void m_jRefSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_jRefSearchActionPerformed
+        assignProductByReference();
+    }//GEN-LAST:event_m_jRefSearchActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel catcontainer;
     private javax.swing.JButton jEditAttributes;
@@ -1183,9 +1203,10 @@ public final class StockDiaryEditor extends javax.swing.JPanel
     private javax.swing.JTextField jproduct;
     private javax.swing.JButton m_EditProduct;
     private javax.swing.JButton m_FindProduct;
-    private javax.swing.JButton m_jEnter;
+    private javax.swing.JButton m_jCodeSearch;
     private eu.hansolo.custom.SteelCheckBox m_jInCatalog;
     private javax.swing.JComboBox m_jLocation;
+    private javax.swing.JButton m_jRefSearch;
     private javax.swing.JButton m_jbtndate;
     private javax.swing.JTextField m_jbuyprice;
     private javax.swing.JTextField m_jcodebar;
