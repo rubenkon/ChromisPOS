@@ -2184,7 +2184,11 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
     public void scrapeSupplierWeb() {                                                
         if( webscraper == null ) {
             webscraper = new WebScrapeBookers();
-            webscraper.StartScraper( webscraper.getSearchUrl(m_jCode.getText()),
+            String search = m_jRef.getText();
+            if( search == null || search.isEmpty() ) {
+                search = m_jCode.getText();
+            }
+            webscraper.StartScraper( webscraper.getSearchUrl( search ),
                     new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
