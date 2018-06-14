@@ -529,6 +529,10 @@ public final class StockDiaryEditor extends javax.swing.JPanel
                     m_jmaximum.setText(null);
                     assignedProduct = null;
                 } else {
+                    if( prod.getRetired() ) {
+                        MessageInf msg = new MessageInf(MessageInf.SGN_WARNING, AppLocal.getIntString("message.productretired"));
+                        msg.show(this);                   
+                    }
                     productid = prod.getID();
                     productref = prod.getReference();
                     productcode = prod.getCode();
