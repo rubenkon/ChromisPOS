@@ -252,10 +252,11 @@ public class JProductFinder extends javax.swing.JDialog {
         jPanel5.setLayout(new java.awt.BorderLayout());
 
         jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(400, 300));
 
         jListProducts.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jListProducts.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jListProducts.setPreferredSize(new java.awt.Dimension(400, 300));
+        jListProducts.setPreferredSize(null);
         jListProducts.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jListProductsMouseClicked(evt);
