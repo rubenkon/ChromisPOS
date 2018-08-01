@@ -45,10 +45,12 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.util.Date;
 import java.util.UUID;
+import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.ListModel;
 import javax.swing.SwingUtilities;
 import uk.chromis.data.loader.LocalRes;
 import static uk.chromis.format.Formats.DOUBLE;
@@ -85,6 +87,7 @@ public final class StockDiaryEditor extends javax.swing.JPanel
 
     private final SentenceList m_sentlocations;
     private ComboBoxValModel m_LocationsModel;
+    private DefaultListModel m_History;
 
     private final AppView m_App;
     private final DataLogicSales m_dlSales;
@@ -143,7 +146,8 @@ public final class StockDiaryEditor extends javax.swing.JPanel
         m_jInCatalog.addActionListener(dirty);
 
         writeValueEOF();
-        
+        m_History = new DefaultListModel();
+        jListHistory.setModel(m_History);
     }
 
     /**
@@ -217,6 +221,7 @@ public final class StockDiaryEditor extends javax.swing.JPanel
         m_jprice.setEnabled(false);
         m_cat.setComponentEnabled(false);
         m_EditProduct.setEnabled(false);
+        jProductImage.setIcon( null );
         
         if( assignedProduct != null ) {
             m_cat.refreshCatalogue( assignedProduct.getCategoryID() );
@@ -345,7 +350,7 @@ public final class StockDiaryEditor extends javax.swing.JPanel
         }
         assignedProduct = null;
     }
-
+    
     /**
      *
      * @param value
@@ -406,7 +411,7 @@ public final class StockDiaryEditor extends javax.swing.JPanel
         m_junits.requestFocusInWindow();
         m_junits.setSelectionStart(0);
         m_junits.setSelectionEnd(m_junits.getText().length());
-
+        
     }
 
     /**
@@ -440,6 +445,13 @@ public final class StockDiaryEditor extends javax.swing.JPanel
         
         inCatalogue = m_jInCatalog.isSelected();
                 
+        m_History.add(0, 
+                m_ReasonModel.getSelectedText() +
+                " " + m_junits.getText() + " x " +
+                productcode +
+                " " + jproduct.getText() +
+                " (" + productref + ")" );
+        
         return new Object[] {
             m_sID,
             Formats.TIMESTAMP.parseValue(m_jdate.getText()),
@@ -839,6 +851,9 @@ public final class StockDiaryEditor extends javax.swing.JPanel
         m_jInCatalog = new eu.hansolo.custom.SteelCheckBox();
         m_jRefSearch = new javax.swing.JButton();
         jProductImage = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jListHistory = new javax.swing.JList<>();
         catcontainer = new javax.swing.JPanel();
 
         setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
@@ -1116,13 +1131,36 @@ public final class StockDiaryEditor extends javax.swing.JPanel
 
         add(jPanel1, java.awt.BorderLayout.PAGE_START);
 
+        jPanel2.setPreferredSize(new java.awt.Dimension(600, 250));
+        jPanel2.setRequestFocusEnabled(false);
+        jPanel2.setLayout(new java.awt.BorderLayout());
+
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(202, 60));
+        jScrollPane1.setRequestFocusEnabled(false);
+
+        jListHistory.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        jListHistory.setMinimumSize(new java.awt.Dimension(200, 60));
+        jListHistory.setName(""); // NOI18N
+        jListHistory.setPreferredSize(new java.awt.Dimension(200, 60));
+        jScrollPane1.setViewportView(jListHistory);
+
+        jPanel2.add(jScrollPane1, java.awt.BorderLayout.PAGE_START);
+
         catcontainer.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         catcontainer.setMaximumSize(new java.awt.Dimension(2147483647, 2147483647));
-        catcontainer.setMinimumSize(new java.awt.Dimension(0, 250));
-        catcontainer.setPreferredSize(new java.awt.Dimension(0, 250));
+        catcontainer.setMinimumSize(new java.awt.Dimension(0, 200));
+        catcontainer.setName(""); // NOI18N
+        catcontainer.setPreferredSize(new java.awt.Dimension(700, 220));
         catcontainer.setLayout(new java.awt.BorderLayout());
-        add(catcontainer, java.awt.BorderLayout.CENTER);
+        jPanel2.add(catcontainer, java.awt.BorderLayout.CENTER);
         catcontainer.getAccessibleContext().setAccessibleParent(jPanel1);
+
+        add(jPanel2, java.awt.BorderLayout.CENTER);
+        jPanel2.getAccessibleContext().setAccessibleDescription("");
     }// </editor-fold>//GEN-END:initComponents
 
     private void m_EditProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_EditProductActionPerformed
@@ -1228,8 +1266,11 @@ public final class StockDiaryEditor extends javax.swing.JPanel
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JList<String> jListHistory;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JLabel jProductImage;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jattributes;
     private javax.swing.JTextField jproduct;
     private javax.swing.JButton m_EditProduct;
