@@ -37,16 +37,20 @@ import uk.chromis.pos.sales.JProductAttEdit;
 import uk.chromis.pos.ticket.ProductInfoExt;
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.util.Date;
 import java.util.UUID;
+import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import uk.chromis.data.loader.LocalRes;
-import static uk.chromis.format.Formats.CURRENCY;
 import static uk.chromis.format.Formats.DOUBLE;
 import uk.chromis.pos.forms.DataLogicSystem;
 import uk.chromis.pos.ticket.PlayWave;
@@ -75,7 +79,6 @@ public final class StockDiaryEditor extends javax.swing.JPanel
     private String attsetid;
     private String attsetinstid;
     private String attsetinstdesc;
-    private String sAppUser;
     private ProductInfoExt assignedProduct;
         
     private final ComboBoxValModel m_ReasonModel;
@@ -355,7 +358,6 @@ public final class StockDiaryEditor extends javax.swing.JPanel
         m_ReasonModel.setSelectedKey(diary[2]);
         m_LocationsModel.setSelectedKey(diary[3]);
         productid = (String) diary[4];
-        sAppUser = (String) diary[8];
         productref = (String) diary[9];
         productcode = (String) diary[10];
         productname =(String) diary[11];
@@ -492,6 +494,17 @@ public final class StockDiaryEditor extends javax.swing.JPanel
         }
     }
 
+    private Image getScaledImage(Image srcImg, int w, int h){
+        BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = resizedImg.createGraphics();
+
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2.drawImage(srcImg, 0, 0, w, h, null);
+        g2.dispose();
+
+        return resizedImg;
+    }
+
     private void assignProduct(ProductInfoExt prod) {
 
         if (jproduct.isEnabled()) {
@@ -588,6 +601,15 @@ public final class StockDiaryEditor extends javax.swing.JPanel
                     jattributes.setText(null);
                     m_EditProduct.setEnabled(true);
 
+                    if( prod.getImage() != null ) {
+                        jProductImage.setIcon( new ImageIcon(getScaledImage(
+                            prod.getImage(),
+                            jProductImage.getSize().width,
+                            jProductImage.getSize().height )) );
+                    } else {
+                        jProductImage.setIcon( null );
+                    }
+                    
                     // calculo el precio sugerido para la entrada.
                     MovementReason reason = (MovementReason) m_ReasonModel.getSelectedItem();
                     Double dPrice = reason.getPrice(prod.getPriceBuy(), prod.getPriceSell());
@@ -816,6 +838,7 @@ public final class StockDiaryEditor extends javax.swing.JPanel
         m_jsellprice = new javax.swing.JTextField();
         m_jInCatalog = new eu.hansolo.custom.SteelCheckBox();
         m_jRefSearch = new javax.swing.JButton();
+        jProductImage = new javax.swing.JLabel();
         catcontainer = new javax.swing.JPanel();
 
         setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
@@ -1071,7 +1094,7 @@ public final class StockDiaryEditor extends javax.swing.JPanel
                 m_jInCatalogActionPerformed(evt);
             }
         });
-        jPanel1.add(m_jInCatalog, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 70, 180, -1));
+        jPanel1.add(m_jInCatalog, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 70, 140, -1));
 
         m_jRefSearch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/uk/chromis/images/products24.png"))); // NOI18N
         m_jRefSearch.setToolTipText(bundle.getString("tiptext.getbarcode")); // NOI18N
@@ -1087,6 +1110,9 @@ public final class StockDiaryEditor extends javax.swing.JPanel
             }
         });
         jPanel1.add(m_jRefSearch, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 100, 40, -1));
+
+        jProductImage.setToolTipText("");
+        jPanel1.add(jProductImage, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 10, 100, 120));
 
         add(jPanel1, java.awt.BorderLayout.PAGE_START);
 
@@ -1203,6 +1229,7 @@ public final class StockDiaryEditor extends javax.swing.JPanel
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JLabel jProductImage;
     private javax.swing.JTextField jattributes;
     private javax.swing.JTextField jproduct;
     private javax.swing.JButton m_EditProduct;
