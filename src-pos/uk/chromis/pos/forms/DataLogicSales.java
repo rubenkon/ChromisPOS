@@ -943,6 +943,22 @@ public class DataLogicSales extends BeanFactoryDataSingle {
      *
      * @return
      */
+    public final SentenceList getProductHistoryList( String productID ) {
+        return new StaticSentence(s, "SELECT "
+                + "ID, "
+                + "DATENEW, "
+                + "REASON, "
+                + "UNITS FROM STOCKDIARY "
+                + "WHERE PRODUCT = '" + productID + "' "
+                + "AND REASON <> -1 AND REASON <> -2 "
+                + "ORDER BY DATENEW DESC "
+                + "LIMIT 0, 20", null, new SerializerReadClass(ProductHistoryInfo.class));
+    }
+    
+    /**
+     *
+     * @return
+     */
     public final SentenceList getLocationsList() {
         return new StaticSentence(s, "SELECT "
                 + "ID, "

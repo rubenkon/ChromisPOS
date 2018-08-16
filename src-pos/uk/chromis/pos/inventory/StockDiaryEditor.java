@@ -45,6 +45,8 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.util.Date;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
@@ -52,6 +54,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.ListModel;
 import javax.swing.SwingUtilities;
+import uk.chromis.data.gui.ListValModel;
 import uk.chromis.data.loader.LocalRes;
 import static uk.chromis.format.Formats.DOUBLE;
 import uk.chromis.pos.forms.DataLogicSystem;
@@ -88,6 +91,8 @@ public final class StockDiaryEditor extends javax.swing.JPanel
     private final SentenceList m_sentlocations;
     private ComboBoxValModel m_LocationsModel;
     private DefaultListModel m_History;
+    private SentenceList m_sentproducthistory;
+    private ListValModel historymodel;
 
     private final AppView m_App;
     private final DataLogicSales m_dlSales;
@@ -110,10 +115,10 @@ public final class StockDiaryEditor extends javax.swing.JPanel
         
         initComponents();      
 
-        // El modelo de locales
         m_sentlocations = m_dlSales.getLocationsList();
         m_LocationsModel = new ComboBoxValModel();
-
+        m_sentproducthistory = null;
+        
         m_ReasonModel = new ComboBoxValModel();
         m_ReasonModel.add(MovementReason.IN_PURCHASE);
         m_ReasonModel.add(MovementReason.OUT_SALE);
@@ -159,6 +164,9 @@ public final class StockDiaryEditor extends javax.swing.JPanel
 
         m_LocationsModel = new ComboBoxValModel(m_sentlocations.list());
         m_jLocation.setModel(m_LocationsModel); // para que lo refresque   
+        
+        historymodel = new ListValModel();
+        jListProductHistory.setModel(historymodel);
 
         m_jcodebar.requestFocusInWindow();
     }
@@ -510,6 +518,17 @@ public final class StockDiaryEditor extends javax.swing.JPanel
         BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = resizedImg.createGraphics();
 
+        int sw = srcImg.getWidth(this);
+        int sh = srcImg.getHeight(this);
+        if( sw > w || sh > h ) {
+            double ar = (double) sw/ (double)sh;
+            if( w > h ) {
+                h = (int) ( h / ar );
+            } else
+            {
+                w = (int) ( w * ar );            
+            }
+        }
         g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         g2.drawImage(srcImg, 0, 0, w, h, null);
         g2.dispose();
@@ -629,6 +648,16 @@ public final class StockDiaryEditor extends javax.swing.JPanel
 
                     assignedProduct = prod;
                     m_cat.showCatalogPanel( assignedProduct.getCategoryID() );
+        
+                    m_sentproducthistory = m_dlSales.getProductHistoryList( productid );
+                    
+                    try {                   
+                        historymodel.refresh( m_sentproducthistory.list() );
+                    } catch (BasicException ex) {
+                        Logger.getLogger(StockDiaryEditor.class.getName()).log(Level.SEVERE, null, ex);
+                        MessageInf msg = new MessageInf(ex);
+                        msg.show(this);            
+                    }
                 }
                 
                 if( prod != null && prod.getIsPack() ) {
@@ -851,6 +880,8 @@ public final class StockDiaryEditor extends javax.swing.JPanel
         m_jInCatalog = new eu.hansolo.custom.SteelCheckBox();
         m_jRefSearch = new javax.swing.JButton();
         jProductImage = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jListProductHistory = new javax.swing.JList<>();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jListHistory = new javax.swing.JList<>();
@@ -1000,7 +1031,7 @@ public final class StockDiaryEditor extends javax.swing.JPanel
 
         jattributes.setEditable(false);
         jattributes.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
-        jPanel1.add(jattributes, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 170, 210, 25));
+        jPanel1.add(jattributes, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 170, 180, 25));
 
         jEditAttributes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/uk/chromis/images/attributes.png"))); // NOI18N
         jEditAttributes.setToolTipText(bundle.getString("tiptext.productattributes")); // NOI18N
@@ -1012,7 +1043,7 @@ public final class StockDiaryEditor extends javax.swing.JPanel
                 jEditAttributesActionPerformed(evt);
             }
         });
-        jPanel1.add(jEditAttributes, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 160, 40, -1));
+        jPanel1.add(jEditAttributes, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 170, 30, 30));
 
         jLabel4.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jLabel4.setText(AppLocal.getIntString("label.units")); // NOI18N
@@ -1127,7 +1158,18 @@ public final class StockDiaryEditor extends javax.swing.JPanel
         jPanel1.add(m_jRefSearch, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 100, 40, -1));
 
         jProductImage.setToolTipText("");
-        jPanel1.add(jProductImage, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 10, 100, 120));
+        jPanel1.add(jProductImage, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 10, 90, 100));
+
+        jScrollPane2.setMinimumSize(new java.awt.Dimension(250, 75));
+        jScrollPane2.setName(""); // NOI18N
+        jScrollPane2.setPreferredSize(new java.awt.Dimension(250, 75));
+
+        jListProductHistory.setToolTipText("");
+        jListProductHistory.setMinimumSize(new java.awt.Dimension(220, 75));
+        jListProductHistory.setName(""); // NOI18N
+        jScrollPane2.setViewportView(jListProductHistory);
+
+        jPanel1.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 120, 240, -1));
 
         add(jPanel1, java.awt.BorderLayout.PAGE_START);
 
@@ -1267,10 +1309,12 @@ public final class StockDiaryEditor extends javax.swing.JPanel
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JList<String> jListHistory;
+    private javax.swing.JList<String> jListProductHistory;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JLabel jProductImage;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField jattributes;
     private javax.swing.JTextField jproduct;
     private javax.swing.JButton m_EditProduct;
