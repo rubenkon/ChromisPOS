@@ -880,9 +880,9 @@ public final class StockDiaryEditor extends javax.swing.JPanel
         m_jInCatalog = new eu.hansolo.custom.SteelCheckBox();
         m_jRefSearch = new javax.swing.JButton();
         jProductImage = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jListProductHistory = new javax.swing.JList<>();
-        jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jListHistory = new javax.swing.JList<>();
         catcontainer = new javax.swing.JPanel();
@@ -1158,47 +1158,46 @@ public final class StockDiaryEditor extends javax.swing.JPanel
         jPanel1.add(m_jRefSearch, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 100, 40, -1));
 
         jProductImage.setToolTipText("");
-        jPanel1.add(jProductImage, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 10, 90, 100));
-
-        jScrollPane2.setMinimumSize(new java.awt.Dimension(250, 75));
-        jScrollPane2.setName(""); // NOI18N
-        jScrollPane2.setPreferredSize(new java.awt.Dimension(250, 75));
-
-        jListProductHistory.setToolTipText("");
-        jListProductHistory.setMinimumSize(new java.awt.Dimension(220, 75));
-        jListProductHistory.setName(""); // NOI18N
-        jScrollPane2.setViewportView(jListProductHistory);
-
-        jPanel1.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 120, 240, -1));
+        jPanel1.add(jProductImage, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 10, 160, 170));
 
         add(jPanel1, java.awt.BorderLayout.PAGE_START);
 
-        jPanel2.setPreferredSize(new java.awt.Dimension(600, 250));
+        jPanel2.setPreferredSize(new java.awt.Dimension(900, 250));
         jPanel2.setRequestFocusEnabled(false);
-        jPanel2.setLayout(new java.awt.BorderLayout());
 
-        jScrollPane1.setPreferredSize(new java.awt.Dimension(202, 60));
-        jScrollPane1.setRequestFocusEnabled(false);
+        jScrollPane2.setName(""); // NOI18N
+        jScrollPane2.setPreferredSize(new java.awt.Dimension(445, 75));
+        jScrollPane2.setRequestFocusEnabled(false);
+
+        jListProductHistory.setToolTipText("");
+        jListProductHistory.setMinimumSize(new java.awt.Dimension(220, 60));
+        jListProductHistory.setName(""); // NOI18N
+        jListProductHistory.setPreferredSize(null);
+        jScrollPane2.setViewportView(jListProductHistory);
+
+        jPanel2.add(jScrollPane2);
+
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(445, 75));
 
         jListHistory.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item" };
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
-        jListHistory.setMinimumSize(new java.awt.Dimension(200, 60));
+        jListHistory.setMinimumSize(new java.awt.Dimension(220, 60));
         jListHistory.setName(""); // NOI18N
-        jListHistory.setPreferredSize(new java.awt.Dimension(200, 60));
+        jListHistory.setPreferredSize(null);
         jScrollPane1.setViewportView(jListHistory);
 
-        jPanel2.add(jScrollPane1, java.awt.BorderLayout.PAGE_START);
+        jPanel2.add(jScrollPane1);
 
         catcontainer.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         catcontainer.setMaximumSize(new java.awt.Dimension(2147483647, 2147483647));
         catcontainer.setMinimumSize(new java.awt.Dimension(0, 200));
         catcontainer.setName(""); // NOI18N
-        catcontainer.setPreferredSize(new java.awt.Dimension(700, 220));
+        catcontainer.setPreferredSize(new java.awt.Dimension(900, 220));
         catcontainer.setLayout(new java.awt.BorderLayout());
-        jPanel2.add(catcontainer, java.awt.BorderLayout.CENTER);
+        jPanel2.add(catcontainer);
         catcontainer.getAccessibleContext().setAccessibleParent(jPanel1);
 
         add(jPanel2, java.awt.BorderLayout.CENTER);

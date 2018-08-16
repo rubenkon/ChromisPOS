@@ -132,6 +132,6 @@ public class ProductHistoryInfo implements SerializableRead, IKeyed {
         if( m_reason == (Integer) (MovementReason.OUT_OPEN_PACK.getKey()) )
             sReason = (String) (MovementReason.OUT_OPEN_PACK.toString());
         
-        return ( m_units + " " + sReason + " " + m_sDate  );                
+        return ( m_sDate.toString() + " " + m_units + " " + sReason  );                
     }    
 }
