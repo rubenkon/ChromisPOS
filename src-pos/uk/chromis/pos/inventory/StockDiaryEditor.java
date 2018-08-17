@@ -1164,7 +1164,10 @@ public final class StockDiaryEditor extends javax.swing.JPanel
 
         jPanel2.setPreferredSize(new java.awt.Dimension(900, 250));
         jPanel2.setRequestFocusEnabled(false);
+        jPanel2.setLayout(new javax.swing.BoxLayout(jPanel2, javax.swing.BoxLayout.LINE_AXIS));
 
+        jScrollPane2.setAutoscrolls(true);
+        jScrollPane2.setMaximumSize(new java.awt.Dimension(32767, 150));
         jScrollPane2.setName(""); // NOI18N
         jScrollPane2.setPreferredSize(new java.awt.Dimension(445, 75));
         jScrollPane2.setRequestFocusEnabled(false);
@@ -1177,6 +1180,7 @@ public final class StockDiaryEditor extends javax.swing.JPanel
 
         jPanel2.add(jScrollPane2);
 
+        jScrollPane1.setMaximumSize(new java.awt.Dimension(32767, 150));
         jScrollPane1.setPreferredSize(new java.awt.Dimension(445, 75));
 
         jListHistory.setModel(new javax.swing.AbstractListModel<String>() {
@@ -1191,17 +1195,17 @@ public final class StockDiaryEditor extends javax.swing.JPanel
 
         jPanel2.add(jScrollPane1);
 
+        add(jPanel2, java.awt.BorderLayout.CENTER);
+        jPanel2.getAccessibleContext().setAccessibleDescription("");
+
         catcontainer.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
-        catcontainer.setMaximumSize(new java.awt.Dimension(2147483647, 2147483647));
+        catcontainer.setMaximumSize(new java.awt.Dimension(32768, 32768));
         catcontainer.setMinimumSize(new java.awt.Dimension(0, 200));
         catcontainer.setName(""); // NOI18N
         catcontainer.setPreferredSize(new java.awt.Dimension(900, 220));
         catcontainer.setLayout(new java.awt.BorderLayout());
-        jPanel2.add(catcontainer);
+        add(catcontainer, java.awt.BorderLayout.PAGE_END);
         catcontainer.getAccessibleContext().setAccessibleParent(jPanel1);
-
-        add(jPanel2, java.awt.BorderLayout.CENTER);
-        jPanel2.getAccessibleContext().setAccessibleDescription("");
     }// </editor-fold>//GEN-END:initComponents
 
     private void m_EditProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_EditProductActionPerformed
