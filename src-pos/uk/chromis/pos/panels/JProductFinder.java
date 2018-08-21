@@ -80,6 +80,7 @@ public class JProductFinder extends javax.swing.JDialog {
         switch (m_productsType) {
             case PRODUCT_NORMAL:
             {
+                m_jKeys.setVisible(true);
                 ProductFilterSales jproductfilter = new ProductFilterSales(m_dlSales, m_jKeys );
                 m_jProductSelect.add(jproductfilter, BorderLayout.CENTER);
                 lpr = new ListProviderCreator(dlSales.getProductListNormal( PRODUCT_FINDER_LIMIT ), jproductfilter);
@@ -89,7 +90,8 @@ public class JProductFinder extends javax.swing.JDialog {
             }  break;
             case PRODUCT_SIMPLE:
             {
-                ProductFilterSearch jproductfilter = new ProductFilterSearch(m_dlSales, m_jKeys );
+                m_jKeys.setVisible(false);
+                ProductFilterSearch jproductfilter = new ProductFilterSearch(m_dlSales );
                 m_jProductSelect.add(jproductfilter, BorderLayout.CENTER);
                 lpr = new ListProviderCreator(dlSales.getProductListSearch( PRODUCT_FINDER_LIMIT ), jproductfilter);
                 jproductfilter.activate();
@@ -99,6 +101,7 @@ public class JProductFinder extends javax.swing.JDialog {
             }  break;
             case PRODUCT_AUXILIAR:               
             {
+                m_jKeys.setVisible(true);
                 ProductFilterSales jproductfilter = new ProductFilterSales(m_dlSales, m_jKeys );
                 m_jProductSelect.add(jproductfilter, BorderLayout.CENTER);
                 lpr = new ListProviderCreator(dlSales.getProductListAuxiliar(PRODUCT_FINDER_LIMIT), jproductfilter);
@@ -108,6 +111,7 @@ public class JProductFinder extends javax.swing.JDialog {
             }   break;
             default: // PRODUCT_ALL
             {
+                m_jKeys.setVisible(true);
                 ProductFilterSales jproductfilter = new ProductFilterSales(m_dlSales, m_jKeys );
                 m_jProductSelect.add(jproductfilter, BorderLayout.CENTER);
                 lpr = new ListProviderCreator(dlSales.getProductList(PRODUCT_FINDER_LIMIT), jproductfilter);
@@ -362,6 +366,8 @@ public class JProductFinder extends javax.swing.JDialog {
     private void jButtonMoreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonMoreActionPerformed
         ProductFilterSales jproductfilter = new ProductFilterSales(m_dlSales, m_jKeys );
         m_jProductSelect.remove(m_FilterComponent);
+        m_jKeys.setVisible(true);
+
         m_jProductSelect.add(jproductfilter, BorderLayout.CENTER);
         lpr = new ListProviderCreator(m_dlSales.getProductListNormal( PRODUCT_FINDER_LIMIT ), jproductfilter);
         jproductfilter.activate();

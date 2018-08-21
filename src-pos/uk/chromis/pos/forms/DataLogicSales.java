@@ -652,7 +652,7 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                 + "LEFT JOIN PRODUCTCODES PC ON (PC.PRODUCT = P.ID) "
                 + "LEFT JOIN TAXES T ON P.TAXCAT = T.CATEGORY "
                 + "WHERE P.ISCOM = " + s.DB.FALSE()
-                + " AND P.RETIRED = " + s.DB.FALSE()
+                + " AND P.RETIRED = ?"
                 + " AND ( "
                 + " P.NAME LIKE ?"
                 + " OR P.REFERENCE = ?"
@@ -660,7 +660,7 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                 + " OR PC.BARCODE = ?"
                 + ") ORDER BY P.NAME "
                 + ( (nLimit > 0) ? " LIMIT " + nLimit : "" ),
-                new SerializerWriteBasic(new Datas[]{ Datas.STRING, Datas.STRING, Datas.STRING, Datas.STRING }),
+                new SerializerWriteBasic(new Datas[]{ Datas.BOOLEAN, Datas.STRING, Datas.STRING, Datas.STRING, Datas.STRING }),
                 ProductInfoExt.getSerializerRead());
     }
 

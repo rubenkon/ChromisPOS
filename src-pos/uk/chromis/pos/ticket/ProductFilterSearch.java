@@ -35,12 +35,11 @@ public class ProductFilterSearch extends javax.swing.JPanel implements EditorCre
      * @param dlSales
      * @param jKeys
      */
-    public ProductFilterSearch(DataLogicSales dlSales, JEditorKeys jKeys ) {
+    public ProductFilterSearch(DataLogicSales dlSales ) {
             
         initComponents();
         
-        m_jtxtName.addEditorKeys(jKeys);
-
+        jIncludeRetired.setSelected(false);
     }
 
     /**
@@ -48,8 +47,7 @@ public class ProductFilterSearch extends javax.swing.JPanel implements EditorCre
      */
     public void activate() {
 
-        m_jtxtName.reset();
-        m_jtxtName.activate();
+        m_jtxtName.setText("");
 
     }
 
@@ -60,7 +58,7 @@ public class ProductFilterSearch extends javax.swing.JPanel implements EditorCre
     @Override
     public Object createValue() throws BasicException {
 
-        Object[] afilter = new Object[4];
+        Object[] afilter = new Object[5];
 
         // Product Name/ref or barcode
         if (m_jtxtName.getText() == null || m_jtxtName.getText().equals("")) {
@@ -68,11 +66,13 @@ public class ProductFilterSearch extends javax.swing.JPanel implements EditorCre
             afilter[1] = null;
             afilter[2] = null;
             afilter[3] = null;
+            afilter[4] = null;
         } else {
-            afilter[0] = "%" + m_jtxtName.getText() + "%";
-            afilter[1] = m_jtxtName.getText();
+            afilter[0] = jIncludeRetired.isSelected();
+            afilter[1] = "%" + m_jtxtName.getText() + "%";
             afilter[2] = m_jtxtName.getText();
             afilter[3] = m_jtxtName.getText();
+            afilter[4] = m_jtxtName.getText();
         }
         
         return afilter;
@@ -86,22 +86,27 @@ public class ProductFilterSearch extends javax.swing.JPanel implements EditorCre
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        m_jtxtName = new uk.chromis.editor.JEditorString();
+        jIncludeRetired = new javax.swing.JCheckBox();
+        m_jtxtName = new javax.swing.JTextField();
 
         setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         setPreferredSize(new java.awt.Dimension(370, 50));
         setLayout(null);
 
-        m_jtxtName.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
-        m_jtxtName.setMinimumSize(new java.awt.Dimension(300, 25));
-        m_jtxtName.setPreferredSize(new java.awt.Dimension(300, 25));
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("pos_messages"); // NOI18N
+        jIncludeRetired.setText(bundle.getString("label.retired")); // NOI18N
+        add(jIncludeRetired);
+        jIncludeRetired.setBounds(350, 10, 120, 23);
+
+        m_jtxtName.setText("jTextField1");
         add(m_jtxtName);
-        m_jtxtName.setBounds(40, 10, 290, 25);
+        m_jtxtName.setBounds(19, 10, 310, 20);
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private uk.chromis.editor.JEditorString m_jtxtName;
+    private javax.swing.JCheckBox jIncludeRetired;
+    private javax.swing.JTextField m_jtxtName;
     // End of variables declaration//GEN-END:variables
 
 }
