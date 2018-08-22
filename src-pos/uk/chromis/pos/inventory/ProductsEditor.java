@@ -52,6 +52,7 @@ import uk.chromis.basic.BasicException;
 import uk.chromis.data.gui.ComboBoxValModel;
 import uk.chromis.data.gui.ListValModel;
 import uk.chromis.data.gui.MessageInf;
+import static uk.chromis.data.gui.MessageInf.SGN_WARNING;
 import uk.chromis.data.loader.SentenceList;
 import uk.chromis.data.user.DirtyManager;
 import uk.chromis.data.user.EditorRecord;
@@ -2243,17 +2244,22 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
     
     private void jButtonAddCodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddCodeActionPerformed
         
-        if( jOtherBarcode.getText().isEmpty() )
+        if( jOtherBarcode.getText().isEmpty() || jOtherQuantity.getText().isEmpty() )
             return;
         
         Double dQty = Double.parseDouble( jOtherQuantity.getText() );
-        BarcodeInfo info = new BarcodeInfo(  jOtherBarcode.getText(), getID(), jOtherPackType.getText(), dQty   );
-        try {
-            m_dlSales.addProductCode( info );
-            updateBarcodeList();
-        } catch (BasicException ex) {
-            MessageInf msg = new MessageInf(ex);
+        if( dQty.doubleValue() == 0 ) {
+            MessageInf msg = new MessageInf( SGN_WARNING, AppLocal.getIntString("label.quantity") + " = 0");
             msg.show(this);                   
+        } else {
+            BarcodeInfo info = new BarcodeInfo(  jOtherBarcode.getText(), getID(), jOtherPackType.getText(), dQty   );
+            try {
+                m_dlSales.addProductCode( info );
+                updateBarcodeList();
+            } catch (BasicException ex) {
+                MessageInf msg = new MessageInf(ex);
+                msg.show(this);                   
+            }
         }
     }//GEN-LAST:event_jButtonAddCodeActionPerformed
 
