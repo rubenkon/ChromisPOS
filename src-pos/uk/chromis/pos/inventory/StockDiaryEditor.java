@@ -52,7 +52,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.ListModel;
 import javax.swing.SwingUtilities;
 import uk.chromis.data.gui.ListValModel;
 import uk.chromis.data.loader.LocalRes;
@@ -80,6 +79,7 @@ public final class StockDiaryEditor extends javax.swing.JPanel
     private Double sellprice;
     private Double stocksecurity;
     private Double stockmaximum;
+    private Double salesquantity;
     private Boolean inCatalogue;
     private String attsetid;
     private String attsetinstid;
@@ -90,7 +90,7 @@ public final class StockDiaryEditor extends javax.swing.JPanel
 
     private final SentenceList m_sentlocations;
     private ComboBoxValModel m_LocationsModel;
-    private DefaultListModel m_History;
+    private final DefaultListModel m_History;
     private SentenceList m_sentproducthistory;
     private ListValModel historymodel;
 
@@ -98,7 +98,7 @@ public final class StockDiaryEditor extends javax.swing.JPanel
     private final DataLogicSales m_dlSales;
     private final DataLogicSystem m_dlSystem;
     private JDlgEditProduct dlgEditProduct = null;
-    private DirtyManager m_Dirty;
+    private final DirtyManager m_Dirty;
     
     /** Creates new form StockDiaryEditor
      * @param app
@@ -197,6 +197,7 @@ public final class StockDiaryEditor extends javax.swing.JPanel
         sellprice = null;
         stocksecurity = null;
         stockmaximum = null;
+        salesquantity = null;
         m_jreference.setText(null);
         m_jcodebar.setText(null);
         jproduct.setText(null);
@@ -230,7 +231,8 @@ public final class StockDiaryEditor extends javax.swing.JPanel
         m_cat.setComponentEnabled(false);
         m_EditProduct.setEnabled(false);
         jProductImage.setIcon( null );
-        
+        m_jSalesQty.setText("");                                
+
         if( assignedProduct != null ) {
             m_cat.refreshCatalogue( assignedProduct.getCategoryID() );
         }
@@ -258,7 +260,8 @@ public final class StockDiaryEditor extends javax.swing.JPanel
         sellprice = null;
         stocksecurity = null;
         stockmaximum = null;
-
+        salesquantity = null;
+        
         m_jreference.setText(null);
         m_jcodebar.setText(null);
         jproduct.setText(null);
@@ -294,6 +297,7 @@ public final class StockDiaryEditor extends javax.swing.JPanel
         if( assignedProduct != null ) {
             m_cat.refreshCatalogue( assignedProduct.getCategoryID() );
         }
+        m_jSalesQty.setText("");                                
 
         assignedProduct = null;
     }
@@ -319,6 +323,8 @@ public final class StockDiaryEditor extends javax.swing.JPanel
         buyprice = (Double) diary[17];
         sellprice = (Double) diary[18];
         inCatalogue = (Boolean) diary[19];
+        salesquantity = null;
+        
         m_jreference.setText(productref);
         m_jcodebar.setText(productcode);
         jproduct.setText(productname);
@@ -352,7 +358,8 @@ public final class StockDiaryEditor extends javax.swing.JPanel
         m_junits.setEnabled(false);
         m_jprice.setEnabled(false);
         m_cat.setComponentEnabled(false);
-        
+        m_jSalesQty.setText("");                                
+
         if( assignedProduct != null ) {
             m_cat.refreshCatalogue( assignedProduct.getCategoryID() );
         }
@@ -380,7 +387,8 @@ public final class StockDiaryEditor extends javax.swing.JPanel
         buyprice = (Double) diary[17];
         sellprice = (Double) diary[18];
         inCatalogue = (Boolean) diary[19];
-
+        salesquantity = null;
+        
         m_jreference.setText(productref);
         m_jcodebar.setText(productcode);
         jproduct.setText(productname);
@@ -415,7 +423,8 @@ public final class StockDiaryEditor extends javax.swing.JPanel
         m_jprice.setEnabled(false);
         m_cat.setComponentEnabled(false);
         m_EditProduct.setEnabled(true);
-        
+        m_jSalesQty.setText("");                                
+
         m_junits.requestFocusInWindow();
         m_junits.setSelectionStart(0);
         m_junits.setSelectionEnd(m_junits.getText().length());
@@ -431,7 +440,7 @@ public final class StockDiaryEditor extends javax.swing.JPanel
         stocksecurity = (Double) Formats.DOUBLE.parseValue(m_jminimum.getText());
         stockmaximum = (Double) Formats.DOUBLE.parseValue(m_jmaximum.getText());
  
-        Double dValue= new Double(0.0);
+        Double dValue= 0.0;
        
         try {
             dValue = (Double) DOUBLE.parseValue(m_junits.getText());
@@ -604,6 +613,8 @@ public final class StockDiaryEditor extends javax.swing.JPanel
                                 (String) m_LocationsModel.getSelectedKey(),
                                 productid );
 
+                        salesquantity = m_dlSales.getProductSalesQty( productid, 183 );
+
                     } catch (BasicException ex) {
                         unitsinstock = null;
                         stockmaximum = null;
@@ -628,7 +639,14 @@ public final class StockDiaryEditor extends javax.swing.JPanel
                     m_junits.setSelectionEnd(m_junits.getText().length());
 
                     m_jminimum.setText(Formats.DOUBLE.formatValue(stocksecurity));
-                    m_jmaximum.setText(Formats.DOUBLE.formatValue(stockmaximum));        
+                    m_jmaximum.setText(Formats.DOUBLE.formatValue(stockmaximum));
+
+                    if( salesquantity != null ) {
+                        m_jSalesQty.setText(Formats.DOUBLE.formatValue(salesquantity) + " sold in last 6 months");        
+                    } else {
+                        m_jSalesQty.setText("");                                
+                    }
+                    
                     jattributes.setText(null);
                     m_EditProduct.setEnabled(true);
 
@@ -880,6 +898,7 @@ public final class StockDiaryEditor extends javax.swing.JPanel
         m_jInCatalog = new eu.hansolo.custom.SteelCheckBox();
         m_jRefSearch = new javax.swing.JButton();
         jProductImage = new javax.swing.JLabel();
+        m_jSalesQty = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jListProductHistory = new javax.swing.JList<>();
@@ -1159,6 +1178,7 @@ public final class StockDiaryEditor extends javax.swing.JPanel
 
         jProductImage.setToolTipText("");
         jPanel1.add(jProductImage, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 10, 160, 170));
+        jPanel1.add(m_jSalesQty, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 180, 160, 20));
 
         add(jPanel1, java.awt.BorderLayout.PAGE_START);
 
@@ -1326,6 +1346,7 @@ public final class StockDiaryEditor extends javax.swing.JPanel
     private eu.hansolo.custom.SteelCheckBox m_jInCatalog;
     private javax.swing.JComboBox m_jLocation;
     private javax.swing.JButton m_jRefSearch;
+    private javax.swing.JLabel m_jSalesQty;
     private javax.swing.JButton m_jbtndate;
     private javax.swing.JTextField m_jbuyprice;
     private javax.swing.JTextField m_jcodebar;

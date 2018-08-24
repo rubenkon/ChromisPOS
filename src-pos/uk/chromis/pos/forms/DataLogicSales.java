@@ -1733,6 +1733,21 @@ public class DataLogicSales extends BeanFactoryDataSingle {
         };
     }
 
+    /**
+     *
+     * @param id
+     * @param nDays
+     * @return
+     * @throws BasicException
+     */
+    public final Double getProductSalesQty(String id, int nDays ) throws BasicException {
+        return (Double) new PreparedSentence(s, 
+                "SELECT COUNT(ID) FROM STOCKDIARY WHERE PRODUCT = ? AND REASON = -1 " + 
+                "AND DATENEW BETWEEN DATE_SUB(NOW(), INTERVAL ? DAY) AND NOW()",
+                new SerializerWriteBasic(new Datas[]{Datas.STRING,Datas.INT}),
+                SerializerReadDouble.INSTANCE).find(id, nDays);
+    }
+        
     public final Double getCustomerDebt(String id) throws BasicException {
         return (Double) new PreparedSentence(s, "SELECT CURDEBT FROM CUSTOMERS WHERE ID = ? ",
                 SerializerWriteString.INSTANCE, SerializerReadDouble.INSTANCE).find(id);
