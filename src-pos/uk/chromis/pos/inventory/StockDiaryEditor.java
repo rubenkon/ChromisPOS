@@ -79,6 +79,7 @@ public final class StockDiaryEditor extends javax.swing.JPanel
     private Double sellprice;
     private Double stocksecurity;
     private Double stockmaximum;
+    private final int SALES_INTERVAL = 90;
     private Double salesquantity;
     private Boolean inCatalogue;
     private String attsetid;
@@ -613,7 +614,7 @@ public final class StockDiaryEditor extends javax.swing.JPanel
                                 (String) m_LocationsModel.getSelectedKey(),
                                 productid );
 
-                        salesquantity = m_dlSales.getProductSalesQty( productid, 183 );
+                        salesquantity = m_dlSales.getProductSalesQty( productid, SALES_INTERVAL );
 
                     } catch (BasicException ex) {
                         unitsinstock = null;
@@ -642,7 +643,8 @@ public final class StockDiaryEditor extends javax.swing.JPanel
                     m_jmaximum.setText(Formats.DOUBLE.formatValue(stockmaximum));
 
                     if( salesquantity != null ) {
-                        m_jSalesQty.setText(Formats.DOUBLE.formatValue(salesquantity) + " sold in last 6 months");        
+                        m_jSalesQty.setText(Formats.DOUBLE.formatValue(salesquantity) +
+                                " sold in last " + SALES_INTERVAL + " days");        
                     } else {
                         m_jSalesQty.setText("");                                
                     }
