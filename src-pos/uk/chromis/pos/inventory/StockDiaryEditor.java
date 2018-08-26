@@ -614,7 +614,9 @@ public final class StockDiaryEditor extends javax.swing.JPanel
                                 (String) m_LocationsModel.getSelectedKey(),
                                 productid );
 
-                        salesquantity = m_dlSales.getProductSalesQty( productid, SALES_INTERVAL );
+                        if( prod.getManageStock() ) {
+                            salesquantity = m_dlSales.getProductSalesQty( productid, SALES_INTERVAL );
+                        }
 
                     } catch (BasicException ex) {
                         unitsinstock = null;
