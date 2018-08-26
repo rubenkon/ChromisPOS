@@ -568,6 +568,7 @@ public final class StockDiaryEditor extends javax.swing.JPanel
                     sellprice = null;
                     stocksecurity = null;
                     stockmaximum = null;
+                    salesquantity = null;
                     attsetid = null;
                     attsetinstid = null;
                     attsetinstdesc = null;
@@ -616,6 +617,8 @@ public final class StockDiaryEditor extends javax.swing.JPanel
 
                         if( prod.getManageStock() ) {
                             salesquantity = m_dlSales.getProductSalesQty( productid, SALES_INTERVAL );
+                        } else {
+                            salesquantity = null;
                         }
 
                     } catch (BasicException ex) {
