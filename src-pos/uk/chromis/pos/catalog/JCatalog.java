@@ -36,6 +36,8 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.ListSelectionEvent;
@@ -261,7 +263,41 @@ public class JCatalog extends JPanel implements ListSelectionListener, CatalogSe
             ((ActionListener) l1).actionPerformed(e);
         }
     }
+    
+    class backgroundLoadButtons implements Runnable {
 
+        private String m_catid;
+        private JCatalogTab m_jcurrTab;
+        
+        void setCategory( JCatalogTab jcurrTab, String catid ) {
+            m_jcurrTab = jcurrTab;
+            m_catid = catid;
+        }
+        
+       @Override
+       public void run() {
+        // the Swing call below must be queued onto the Swing event thread
+        SwingUtilities.invokeLater(new Runnable(){
+            @Override
+            public void run() {
+                try {
+                    java.util.List<ProductInfoExt> products;
+                    products = m_dlSales.getProductCatalog(m_catid);
+                    for (ProductInfoExt prod : products) {
+                       // These are the products selection panel                   
+                       m_jcurrTab.addButton(
+                               new ImageIcon(tnbbutton.getThumbNailText(prod.getImage(), getProductLabel(prod))),
+                               new SelectedAction(prod), prod.getTextTip(),
+                               "");
+                    }
+                } catch (BasicException ex) {
+                    Logger.getLogger(JCatalog.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+          });
+       }
+    }
+    
     private void loadCategoryPanel( String catid ) {
 
         try {
@@ -289,12 +325,11 @@ public class JCatalog extends JPanel implements ListSelectionListener, CatalogSe
                 }
             }
 
-            // Add products
-            java.util.List<ProductInfoExt> products = m_dlSales.getProductCatalog(catid);
-            for (ProductInfoExt prod : products) {
-                // These are the products selection panel                   
-                jcurrTab.addButton(new ImageIcon(tnbbutton.getThumbNailText(prod.getImage(), getProductLabel(prod))), new SelectedAction(prod), prod.getTextTip(), "");
-            }
+            // Add products in background so till keeps running
+            backgroundLoadButtons work = new backgroundLoadButtons();
+            work.setCategory(jcurrTab, catid);
+            Thread thread2 = new Thread(work);
+            thread2.start();
         } catch (BasicException e) {
             JMessageDialog.showMessage(this, new MessageInf(MessageInf.SGN_WARNING, AppLocal.getIntString("message.notactive"), e));
         }
