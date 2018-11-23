@@ -8,6 +8,8 @@ package uk.chromis.pos.inventory;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.util.Properties;
+import java.util.Timer;
+import java.util.TimerTask;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import uk.chromis.data.gui.JImageEditor;
@@ -37,7 +39,7 @@ public class WebScrapeBookers extends JFrame {
 
         setMinimumSize(new Dimension(1024, 768));  
         pack();
-        setVisible(true);  
+        setVisible(true); 
     }
 
     public void saveState() {
@@ -164,8 +166,8 @@ public class WebScrapeBookers extends JFrame {
     }
 
     public void checkEnableOK() {
+        boolean bEnable = false;
         if( WebView != null ){
-            boolean bEnable = false;
         
             String url = WebView.getUrl();
             String html = WebView.getPageSource();

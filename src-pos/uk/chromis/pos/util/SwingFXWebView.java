@@ -50,11 +50,11 @@ import org.w3c.dom.Document;
 public class SwingFXWebView extends JPanel {  
      
     private Stage stage;  
-    private WebView browser;  
+    private static WebView browser;  
+    private static WebEngine webEngine;
     private JFXPanel jfxPanel;  
     private JButton okButton;  
     private JButton cancelButton;  
-    private WebEngine webEngine;
     private URI     startUri;
     private ActionListener mActionListener;
     private String cookieFile;
@@ -246,27 +246,34 @@ public class SwingFXWebView extends JPanel {
     public void setUrl( String newUrl ) {
         Platform.runLater(new Runnable() {
             @Override public void run() {
-                   webEngine.load(newUrl);
+                pageSource = null;
+                webEngine.load(newUrl);
             }
         });
     }
     
     public String getUrl() {
-        return webEngine.getLocation();
+        if( webEngine != null ) {
+            return webEngine.getLocation();
+        } else {
+            return( null );
+        }
     }
 
     public String getPageSource() {
+        if( webEngine == null ) {
+            return null;
+        }
+        Document doc = webEngine.getDocument();
+       
+        pageSource = (String) webEngine.executeScript("document.documentElement.outerHTML");
         return pageSource;
     }
            
     // Called when page has finished loading
     public void onLoadComplete() {
         
-        Document doc = webEngine.getDocument();
-       
-        pageSource = (String) webEngine.executeScript("document.documentElement.outerHTML");
-
-        if( pageSource != null ) {
+        if( getPageSource() != null ) {
             mActionListener.actionPerformed( new ActionEvent( browser, ACTION_PERFORMED, "PageLoadComplete" ) );
         }
 
@@ -303,7 +310,10 @@ public class SwingFXWebView extends JPanel {
                 }
 
                 // Set up the embedded browser:
-                browser = new WebView();
+                if( browser == null ) {
+                    browser = new WebView();
+                }
+                
                 webEngine = browser.getEngine();
   
                 webEngine.getLoadWorker().stateProperty().addListener(
@@ -313,6 +323,7 @@ public class SwingFXWebView extends JPanel {
                       ObservableValue<? extends Worker.State> observable,
                       Worker.State oldValue, Worker.State newValue ) {
 
+                      Logger.getLogger(SwingFXWebView.class.getName()).log(Level.INFO, "webEngine state change: " + newValue );
                       if( newValue != Worker.State.SUCCEEDED ) {
                           return;
                       }
